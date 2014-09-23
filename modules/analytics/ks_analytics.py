@@ -36,12 +36,25 @@ class analytics:
         self.cursor.execute(sql)    
         return self.cursor.fetchone()[0]    
 
+   
     #----------------------------------------    
     def calculateGroupBy(self,fact_name, group_by, where_str):
         sql = "select sum(subtotal) from (select %s as subtotal from BigTable group by %s) as total;"\
             %(fact_name, group_by)
         if where_str != None:
             sub_sql = "select sum(subtotal) from (select %s as subtotal " +\
+                "from BigTable where %s group by %s) as total;" 
+            sql = sub_sql%(fact_name, where_str, group_by)
+        print sql                 
+        self.cursor.execute(sql)    
+        return self.cursor.fetchone()[0]
+    
+    #----------------------------------------    
+    def calculateGroupByAVG(self,fact_name, group_by, where_str):
+        sql = "select avg(subtotal) from (select %s as subtotal from BigTable group by %s) as total;"\
+            %(fact_name, group_by)
+        if where_str != None:
+            sub_sql = "select avg(subtotal) from (select %s as subtotal " +\
                 "from BigTable where %s group by %s) as total;" 
             sql = sub_sql%(fact_name, where_str, group_by)
         print sql                 
