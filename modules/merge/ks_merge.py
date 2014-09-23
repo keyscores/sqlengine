@@ -26,6 +26,27 @@ class merge:
             row_counter += 1    
         self.db.commit()
         
+    def addTableCompanyCross(self, file_name, table_name, company_name):
+        self.cursor.execute("use merge")
+        row_counter = 0
+        sql_insert = ""
+        for row in csv.reader(open(file_name)):
+            if row_counter == 0:
+                header = row
+                header.append("company_name")
+                print header
+                col_types = []
+                for col in row:
+                    col_types.append("VARCHAR(50)")
+                sql_insert = merge.getInsert(table_name,  header)
+                self.cursor.execute(merge.getSchema(table_name, header, col_types))
+            else:    
+                print sql_insert
+                print row     
+                row.append(company_name)
+                self.cursor.execute(sql_insert%tuple(map(repr,row)))
+            row_counter += 1    
+        self.db.commit()
                    
     def reset(self):
         self.cursor.execute("drop database if exists merge")
