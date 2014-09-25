@@ -1,4 +1,4 @@
-from ks_fileHandler import filehandler
+import ks_fileHandler
 from ks_merge import merge
 from ks_analytics import analytics
 import time
