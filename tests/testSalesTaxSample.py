@@ -118,7 +118,7 @@ class TestSalesTaxSample(unittest.TestCase):
         self.assertAlmostEqual(0.6288, self.ks_analytics.calculate("TAXES","6/1/14","ProductType:D"))
       
     def test_REVENUE_AFTER_TAX(self):
-        self.assertEqual(22.7424, self.ks_analytics.calculate("REVENUE_AFTER_TAX","6/1/14"))
+        self.assertAlmostEqual(22.142400264, self.ks_analytics.calculate("REVENUE_AFTER_TAX","6/1/14"))
         
     def test_KPI_MARGIN(self):
         self.assertAlmostEqual(0.9226, self.ks_analytics.calculateSm2("REVENUE_AFTER_TAX","/","NET_REVENUE", "6/1/14",None))
