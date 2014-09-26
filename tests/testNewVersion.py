@@ -49,11 +49,11 @@ class TestSalesTaxSample(unittest.TestCase):
         ks_merge.reset()
         latest_sales_version = file_handler.getLatestTable("Sales", "1")
         print (latest_sales_version)
-        latest_sales_name = "./modules/filehandler/data/%s"%(latest_sales_version)
+        latest_sales_name = "./filehandler/data/%s"%(latest_sales_version)
         print latest_sales_name
         ks_merge.addTable(latest_sales_name,"Sales")
-        ks_merge.addTable("./modules/filehandler/data/CountryRegion.csv","CountryRegion")
-        ks_merge.addTable("./modules/filehandler/data/ComissionTax.csv","ComissionTax")
+        ks_merge.addTable("./filehandler/data/CountryRegion.csv","CountryRegion")
+        ks_merge.addTable("./filehandler/data/ComissionTax.csv","ComissionTax")
         sql_BigTable = "CREATE TABLE BigTable(id INT PRIMARY KEY AUTO_INCREMENT, \
                  VendorId VARCHAR(25), \
                  ProductType VARCHAR(25), \

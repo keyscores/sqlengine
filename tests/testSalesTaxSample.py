@@ -47,9 +47,9 @@ class TestSalesTaxSample(unittest.TestCase):
             #----------------------
             ks_merge = merge(cls.db)
             ks_merge.reset()
-            ks_merge.addTable("./modules/filehandler/data/Sales.csv","Sales")
-            ks_merge.addTable("./modules/filehandler/data/CountryRegion.csv","CountryRegion")
-            ks_merge.addTable("./modules/filehandler/data/ComissionTax.csv","ComissionTax")
+            ks_merge.addTable("./filehandler/data/Sales.csv","Sales")
+            ks_merge.addTable("./filehandler/data/CountryRegion.csv","CountryRegion")
+            ks_merge.addTable("./filehandler/data/ComissionTax.csv","ComissionTax")
             sql_BigTable = "CREATE TABLE BigTable(id INT PRIMARY KEY AUTO_INCREMENT, \
                  VendorId VARCHAR(25), \
                  ProductType VARCHAR(25), \

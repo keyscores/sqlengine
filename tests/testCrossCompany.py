@@ -32,7 +32,7 @@ class TestCrossCompany(unittest.TestCase):
         file_handler.addTable("Sales", "2","SalesCustomerTwo.csv")
 
         file_handler.addTable("ComissionTax", "1","ComissionTax.csv")
-        file_handler.addTable("ComissionTax","2","ComissionTaxCustomerTwo.csv")
+        file_handler.addTable("ComissionTax","2",".ComissionTaxCustomerTwo.csv")
 
         file_handler.addTable("CountryRegion", "1","CountryRegion.csv")
         file_handler.addTable("CountryRegion","2","CountryRegionCustomerTwo.csv")
@@ -48,12 +48,12 @@ class TestCrossCompany(unittest.TestCase):
         ks_merge = merge(cls.db)
         ks_merge.reset()
 
-        ks_merge.addTableCompanyCross("./modules/filehandler/data/SalesCustomerTwo.csv","Sales","2")
-        ks_merge.addTableCompanyCross("./modules/filehandler/data/Sales.csv","Sales","1")
+        ks_merge.addTableCompanyCross("./filehandler/data/SalesCustomerTwo.csv","Sales","2")
+        ks_merge.addTableCompanyCross("./filehandler/data/Sales.csv","Sales","1")
 
 
-        ks_merge.addTable("./modules/filehandler/data/CountryRegion.csv","CountryRegion")
-        ks_merge.addTable("./modules/filehandler/data/ComissionTax.csv","ComissionTax")
+        ks_merge.addTable("./filehandler/data/CountryRegion.csv","CountryRegion")
+        ks_merge.addTable("./filehandler/data/ComissionTax.csv","ComissionTax")
         sql_BigTable = "CREATE TABLE BigTable(id INT PRIMARY KEY AUTO_INCREMENT, \
                  VendorId VARCHAR(25), \
                  ProductType VARCHAR(25), \
