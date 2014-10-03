@@ -1,0 +1,32 @@
+(1)
+Install modules
+(a) ks_analytics 
+python /modules/ks_analytics/setup.py install
+
+(b) ks_merge 
+python /modules/ks_analytics/setup.py install
+
+(c) ks_filehandler 
+python /modules/ks_analytics/setup.py install
+
+(d) MySQL-python-1.2.3 
+python /modules/MySQL-python-1.2.3/setup.py install
+
+(2) pip freeze:
+MySQL-python==1.2.3
+argparse==1.2.1
+distribute==0.6.24
+ks-analytics==0.1
+ks-filehandler==0.1
+ks-merge==0.1
+wsgiref==0.1.2
+
+(3) MySQL settings
+Adjust setting in /tests/mysql_setting.txt
+
+(4) Run Tests
+pythin /test/testRunner.py
+
+
+
+
