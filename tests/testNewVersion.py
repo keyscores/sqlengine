@@ -1,4 +1,4 @@
-from ks_fileHandler import filehandler
+from ks_filehandler import filehandler
 from ks_merge import merge
 from ks_analytics import analytics
 import time
@@ -49,11 +49,11 @@ class TestSalesTaxSample(unittest.TestCase):
         ks_merge.reset()
         latest_sales_version = file_handler.getLatestTable("Sales", "1")
         print (latest_sales_version)
-        latest_sales_name = "./filehandler/data/%s"%(latest_sales_version)
+        latest_sales_name = "./ks_filehandler/ks_filehandler/data/%s"%(latest_sales_version)
         print latest_sales_name
         ks_merge.addTable(latest_sales_name,"Sales")
-        ks_merge.addTable("./filehandler/data/CountryRegion.csv","CountryRegion")
-        ks_merge.addTable("./filehandler/data/ComissionTax.csv","ComissionTax")
+        ks_merge.addTable("./ks_filehandler/ks_filehandler/data/CountryRegion.csv","CountryRegion")
+        ks_merge.addTable("./ks_filehandler/ks_filehandler/data/ComissionTax.csv","ComissionTax")
         sql_BigTable = "CREATE TABLE BigTable(id INT PRIMARY KEY AUTO_INCREMENT, \
                  VendorId VARCHAR(25), \
                  ProductType VARCHAR(25), \

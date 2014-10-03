@@ -1,4 +1,4 @@
-from ks_fileHandler import filehandler
+from ks_filehandler import filehandler
 from ks_merge import merge
 from ks_analytics import analytics
 import time
@@ -48,12 +48,12 @@ class TestCrossCompany(unittest.TestCase):
         ks_merge = merge(cls.db)
         ks_merge.reset()
 
-        ks_merge.addTableCompanyCross("./filehandler/data/SalesCustomerTwo.csv","Sales","2")
-        ks_merge.addTableCompanyCross("./filehandler/data/Sales.csv","Sales","1")
+        ks_merge.addTableCompanyCross("./ks_filehandler/ks_filehandler/data/SalesCustomerTwo.csv","Sales","2")
+        ks_merge.addTableCompanyCross("./ks_filehandler/ks_filehandler/data/Sales.csv","Sales","1")
 
 
-        ks_merge.addTable("./filehandler/data/CountryRegion.csv","CountryRegion")
-        ks_merge.addTable("./filehandler/data/ComissionTax.csv","ComissionTax")
+        ks_merge.addTable("./ks_filehandler/ks_filehandler/data/CountryRegion.csv","CountryRegion")
+        ks_merge.addTable("./ks_filehandler/ks_filehandler/data/ComissionTax.csv","ComissionTax")
         sql_BigTable = "CREATE TABLE BigTable(id INT PRIMARY KEY AUTO_INCREMENT, \
                  VendorId VARCHAR(25), \
                  ProductType VARCHAR(25), \
