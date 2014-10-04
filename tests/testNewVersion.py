@@ -73,7 +73,7 @@ class TestSalesTaxSample(unittest.TestCase):
         "S.CountryCode, C.Region, T.RightsHolder, T.ComissionRate, "\
         "T.TaxRate from Sales S Inner Join CountryRegion C on "\
         "S.CountryCode=C.CountryCode Inner join ComissionTax T on " \
-        "S.VendorId = T.VendorIdentifier and C.Region = T.Region;"
+        "S.VendorId = T.VendorId and C.Region = T.Region;"
         ks_merge.join(sql_join, sql_BigTable)
         
         #----------------------
