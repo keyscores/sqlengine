@@ -63,7 +63,6 @@ class merge:
         self.db.commit()
     
     def getTables(self):
-        print "get tables***************"
         self.cursor.execute("use merge")
         self.cursor.execute("show tables in merge")
         numrows = self.cursor.rowcount
@@ -120,7 +119,7 @@ class merge:
             return False
         
     def getJoinColUniqueOneLink(self, first_table, second_table):
-        general_links = generalLinks([first_table, second_table])
+        general_links = generalLinksDB([first_table, second_table], self)
         links = general_links.getLinks()
         edge = links[0]
         first_node = edge[0]
@@ -138,17 +137,17 @@ class merge:
         [first_table, join_col2] = second_node.split(':')
         return [join_col1, join_col2]
     
-    def joinUniqueTwoLinks(self, first_table, second_table, join_col1, join_col2):
+    def joinUniqueTwoLinks(self, first_table, second_table):
                 
         self.cursor.execute("use merge")
+        join_col1, join_col2 = self.getJoinColUniqueTwoLinks(first_table, second_table)
+        # if first table has unique cols then swap tables
+        if self.isUniqueColTwo(first_table, join_col1, join_col2):
+            first_table, second_table = second_table, first_table
         first_header = self.getHeader(first_table)
         second_header = self.getHeader(second_table)
         second_header_duplicates = list(set(first_header) & set(second_header))
-        print("duplicates")
-        print (second_header_duplicates)
         second_header_uniques = list(set(second_header) - set(second_header_duplicates))
-        print("uniques")
-        print (second_header_uniques)
         union_header = first_header
         first_header = self.getHeader(first_table)
         union_header.extend(second_header_uniques)
@@ -180,53 +179,17 @@ class merge:
         self.cursor.execute(sql_drop2)
         self.cursor.execute(sql_rename)
         self.db.commit()
+       
+    
         
-    def joinUniqueTwoLinks2(self, first_table, second_table, join_col1, join_col2):
+    def joinUniqueOneLink(self, first_table, second_table):
                 
         self.cursor.execute("use merge")
-        first_header = self.getHeader(first_table)
-        second_header = self.getHeader(second_table)
-        second_header_duplicates = list(set(first_header) & set(second_header))
-        print("duplicates")
-        print (second_header_duplicates)
-        second_header_uniques = list(set(second_header) - set(second_header_duplicates))
-        print("uniques")
-        print (second_header_uniques)
-        union_header = first_header
-        first_header = self.getHeader(first_table)
-        union_header.extend(second_header_uniques)
-        self.addTableByCols(union_header)
-                
-        first_headerPlusTable = map(lambda x: "%s.%s,"%(first_table,x), first_header)
-        last_second_header_uniques = second_header_uniques.pop()
-        if len(second_header_uniques) > 0:
-            second_header_uniques_PlusTable = map(lambda x: "%s.%s,"%(second_table,x), second_header_uniques)
-        else:
-            second_header_uniques_PlusTable = [""]
+        join_col = self.getJoinColUniqueOneLink(first_table, second_table)
         
-        join_cols_first = "".join(first_headerPlusTable)
-        print join_cols_first
-        join_cols_second = "".join(second_header_uniques_PlusTable) + "%s.%s"%(second_table, last_second_header_uniques)
-        print join_cols_second
-        join_cols = join_cols_first + join_cols_second
-        sql_select = "select %s from %s inner join %s on %s.%s = %s.%s and %s.%s = %s.%s"\
-            %(join_cols, first_table, second_table,
-              first_table, join_col1, second_table, join_col1,
-              first_table, join_col2, second_table, join_col2)
-        sql_insert = "insert into TempJoin " + sql_select;
-        print (sql_insert)
-        sql_drop1 = "drop table %s"%first_table
-        sql_drop2 = "drop table %s"%second_table
-        sql_rename = "rename table TempJoin to %s"%first_table
-        #self.cursor.execute(sql_insert)
-        #self.cursor.execute(sql_drop1)
-        #self.cursor.execute(sql_drop2)
-        #self.cursor.execute(sql_rename)
-        self.db.commit()
-        
-    def joinUniqueOneLink(self, first_table, second_table, join_col):
-                
-        self.cursor.execute("use merge")
+        # if first table has unique col then swap tables
+        if self.isUniqueCol(first_table, join_col):
+            first_table, second_table = second_table, first_table
         first_header = self.getHeader(first_table)
         second_header = self.getHeader(second_table)
         second_header_duplicates = list(set(first_header) & set(second_header))
@@ -262,16 +225,16 @@ class merge:
         
         
     def isUniqueOneLink(self, first_table, second_table):
-        general_links = generalLinks([first_table, second_table])
+        general_links = generalLinksDB([first_table, second_table],self)
         links = general_links.getLinks()
-        if len(general_links.getLinks()) == 1:
+        print len(links)
+        print links
+        if len(links) == 1:
             edge = links[0]
             first_node = edge[0]
             second_node = edge[1]
             [first_table, first_col] = first_node.split(':')
             [second_table, second_col] = second_node.split(':')
-            [first_table, first_postfix] = first_table.split('.')
-            [second_table, second_postfix] = second_table.split('.')
             if (self.isUniqueCol(first_table, first_col)) or (self.isUniqueCol(second_table, second_col)):
                 return True
             else:
@@ -305,10 +268,6 @@ class merge:
             row = self.cursor.fetchone()
             header.append(row[0])
         self.db.commit()
-        print "table name"
-        print table_name
-        print "header"
-        print header
         return header
     
     #----------------------------------------
@@ -321,6 +280,30 @@ class merge:
         sql_start = "CREATE TABLE TempJoin("
         sql = sql_start + sql_cols
         self.cursor.execute(sql)
+    
+    def automaticMerge(self):
+        print ("AUTOMATIC MERGE:")
+        links = self.getLinks()
         
+        #apply tablewise onelink reduction
+        for link in links:
+            node1 = link[0]
+            node2 = link[1]
+            first_table, col1 = node1.split(":")
+            second_table, col2 = node2.split(":")
+            uniqueOneLink = self.isUniqueOneLink(first_table, second_table)
+            if (uniqueOneLink == True):
+                self.joinUniqueOneLink(first_table, second_table)
+                
+        #apply tablewise twolinks reduction
+        for link in links:
+            node1 = link[0]
+            node2 = link[1]
+            first_table, col1 = node1.split(":")
+            second_table, col2 = node2.split(":")
+            uniqueOneLink = self.isUniqueTwoLinks(first_table, second_table)
+            if (uniqueOneLink == True):
+                print first_table, second_table
+                self.joinUniqueTwoLinks(first_table, second_table)
         
         
