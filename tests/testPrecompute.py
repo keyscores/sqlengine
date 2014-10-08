@@ -49,7 +49,8 @@ class TestPrecompute(unittest.TestCase):
                      'ComissionRate':'fact',
                      'id':'sys'}
         ks_precompute.reset()
-        ks_precompute.addBigTable(meta_data,"Sales")
+        ks_precompute.addBigTable(meta_data,"Sales",1)
+        
                 
         
     @classmethod    
