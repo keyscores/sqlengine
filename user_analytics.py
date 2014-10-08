@@ -35,6 +35,48 @@ def measure_data(company_id, measures, frequency, start_date, end_date,
 
     Return Value:
 
-    Coming soon...
+    The return value will vary on whether groupby is passed or not.
+
+    Without groupby the return will look like this:
+    {
+        'CODE1':{
+            'period1':100.0,
+            'period5':100.0,
+        },
+        'CODE2':{
+            'period2':130.0,
+            'period3':130.0,
+        }
+    }
+
+    CODE1 and CODE2 will be the measure codes of the measure IDs passed.
+    periods are strings formatted as follows:
+    For day frequency: YYYY-MM-DD
+    For month frequency: YYYY-MM
+    For quarter frequency: YYYY-Q[1-4]
+
+
+    With a groupby, an additional level is added, like this:
+    {
+        'CODE1':{
+            'LEV1':{
+                'period1':100.0,
+                'period5':100.0,
+            },
+            'LEV2':{
+                'period1':100.0,
+                'period5':100.0,
+            },
+
+        }
+    }
+
+    Where LEV1 and LEV2 are levels for the dimension specified.
+
+    Periods and levels without data are omitted from the data structure.
+    e.g. there is no need to have a '2011-03':None in the returned dictionary
+
+
+
     """
     pass
