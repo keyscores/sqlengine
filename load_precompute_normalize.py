@@ -16,19 +16,7 @@ def load_precompute_normalize(company_name, db):
     ks_merge.automaticMerge()
     
     ks_precompute = precompute(db)
-    meta_data = {'VendorId': 'dim', 
-                 'ProductType':'dim',
-                 'Units':'fact',
-                 'RoyaltyPrice':'fact',
-                 'DownloadDate':'date',
-                 'CustomerCurrency':'dim',
-                 'CountryCode':'dim',
-                 'Region':'dim',
-                 'ExchangeRate':'fact',
-                 'TaxRate':'fact',
-                 'RightsHolder':'dim',
-                 'ComissionRate':'fact',
-                 'id':'sys'}
+    meta_data = ks_merge.getMetaDataFromTable("Sales")
     ks_precompute.reset()
     ks_precompute.addBigTable(meta_data,"Sales",1)
     
