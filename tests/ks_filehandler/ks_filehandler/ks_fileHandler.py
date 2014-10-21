@@ -32,6 +32,13 @@ class filehandler:
         table_id = self.cursor.fetchone()[0]
         return table_id
    
+    def getLatestTablesByCompany(self, company_name):
+        self.cursor.execute("use filehandler")
+        sql = "select max(stamp),table_name,file_name from files where company_name='%s' group by table_name ;"%(company_name)
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        return rows
+        
         
         
     def reset(self):
@@ -40,7 +47,7 @@ class filehandler:
         self.cursor.execute("use filehandler")
         sql = "CREATE TABLE files(Id INT PRIMARY KEY AUTO_INCREMENT, \
                  table_name VARCHAR(50), \
-                 file_name VARCHAR(50), \
+                 file_name VARCHAR(200), \
                  company_name VARCHAR(50), stamp TIMESTAMP);"
         print sql         
         self.cursor.execute(sql)
