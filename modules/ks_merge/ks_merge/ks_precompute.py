@@ -19,8 +19,15 @@ class precompute:
         self.db.commit()
         
     def addFactCol(self, col, table, version_id, company_id):
+        # fetch measure_id
+        sql_id = "select id from filehandler.ks_measures where name = '%s';"%(col)
+        self.cursor.execute(sql_id)
+        rows = self.cursor.fetchall()
+        row = rows[0]
+        measure_id = row[0]
+        
         sql1 = "insert into ks_fact "
-        sql2 = "select ks_rows.id,%s,'%s','%s','%s' from ks_rows inner join "%(col,col, company_id, version_id)  
+        sql2 = "select ks_rows.id,%s,'%s','%s','%s' from ks_rows inner join "%(col,measure_id, company_id, version_id)  
         sql3 = "merge.%s on merge.%s.id=ks_rows.row_id where version_id=%s"%(table, table, version_id)
         sql = sql1 + sql2 + sql3
         
@@ -94,7 +101,8 @@ class precompute:
                 
         self.cursor.execute("CREATE TABLE ks_dim_level(link_id INT, dim_level VARCHAR(50))")
         self.cursor.execute("CREATE TABLE ks_fact(link_id INT, value float,"+
-                            "name VARCHAR(50), company_id INT, big_table_version_id INT)")
+                            "measure_id INT, company_id INT, big_table_version_id INT,"+
+                            "Foreign Key (measure_id) References filehandler.ks_measures(Id))")
         self.cursor.execute("CREATE TABLE ks_date(link_id INT, date Date)")
         self.db.commit()
         

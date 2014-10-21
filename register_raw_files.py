@@ -8,6 +8,7 @@ def register_raw_files(file_path, company_name, db):
     pre_fix, post_fix = file_name.split(".")
     table_name = pre_fix
     ks_fh.addTable(table_name, company_name, file_path)
+    ks_fh.updateMeasureTable(file_path, company_name)
    
     
 

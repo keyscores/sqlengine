@@ -25,23 +25,14 @@ class TestMerge(unittest.TestCase):
             db_name = mysql_params[3]
             cls.db = MySQLdb.connect(localhost, user, password, db_name)
             
+
     
-    def test_register_files(self):
-        company_name = "company 3"
-        first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
-        second_table = "./ks_filehandler/ks_filehandler/data/graph/Currencyv2.csv"    
-        third_table = "./ks_filehandler/ks_filehandler/data/CountryRegion.csv"
-        fourth_table = "./ks_filehandler/ks_filehandler/data/ComissionTax.csv"    
-        register_raw_files(first_table,company_name, self.db)
-        register_raw_files(second_table,company_name, self.db)
-        register_raw_files(third_table,company_name, self.db)
-        register_raw_files(fourth_table,company_name, self.db)
-    
-    @unittest.skip("demonstrating skipping")
     def test_precompute(self):
         ks_fh = filehandler(self.db)
-        company_name = "company 3"
-        load_precompute_normalize(company_name, self.db)
+        #ks_fh.reset()
+        company = "company 1"
+        first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
+        ks_fh.updateMeasureTable(first_table, company)
         
       
         
