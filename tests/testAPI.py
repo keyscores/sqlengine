@@ -7,7 +7,7 @@ from ks_filehandler import filehandler
 # import API
 from register_raw_files import register_raw_files
 from load_precompute_normalize import load_precompute_normalize
-
+from user_analytics import measure_data
 class TestMerge(unittest.TestCase):
     
     @classmethod
@@ -25,7 +25,7 @@ class TestMerge(unittest.TestCase):
             db_name = mysql_params[3]
             cls.db = MySQLdb.connect(localhost, user, password, db_name)
             
-    
+    @unittest.skip("demonstrating skipping")
     def test_register_files(self):
         company_name = "company 3"
         first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
@@ -42,6 +42,12 @@ class TestMerge(unittest.TestCase):
         ks_fh = filehandler(self.db)
         company_name = "company 3"
         load_precompute_normalize(company_name, self.db)
+        
+    def test_UserAnalytics(self):
+        ks_fh = filehandler(self.db)
+        company_id = "1"
+        data = measure_data(self.db, 1, [4,32])
+        print data
         
       
         

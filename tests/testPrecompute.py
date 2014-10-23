@@ -20,7 +20,7 @@ class TestPrecompute(unittest.TestCase):
             db_name = mysql_params[3]
             cls.db = MySQLdb.connect(localhost, user, password, db_name)
             
-     
+    @unittest.skip("demonstrating skipping") 
     def test_AddBigTable(self):
         # compute BigTable
         first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
@@ -51,7 +51,12 @@ class TestPrecompute(unittest.TestCase):
         ks_precompute.reset()
         ks_precompute.addBigTable(meta_data,"Sales",1)
         
-                
+   
+    def test_GetMeasure(self):
+        ks_precompute = precompute(self.db)
+        data = ks_precompute.getMeasureData([4,32], 1)
+        print data
+        
         
     @classmethod    
     def tearDownClass(cls):

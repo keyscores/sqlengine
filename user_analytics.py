@@ -1,7 +1,8 @@
+from ks_merge import precompute
 #Interface for the front end to create reports
 
 
-def measure_data(company_id, measures, frequency, start_date, end_date,
+def measure_data(db, company_id, measures, frequency=None, start_date=None, end_date=None,
     groupby=None, measure_filter=None, dimension_filters=None, score_kpis=True):
     """
     measures - set() of measure IDs
@@ -79,4 +80,6 @@ def measure_data(company_id, measures, frequency, start_date, end_date,
 
 
     """
-    pass
+    ks_precompute = precompute(db)
+    data = ks_precompute.getMeasureData(measures, company_id)
+    return data

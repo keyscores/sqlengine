@@ -65,6 +65,25 @@ class precompute:
             addCol[meta_data[col]](col, table_name, version_id, company_id)
         self.db.commit()    
         
+    def getMeasureData(self, measure_ids, company_id):
+        self.cursor.execute("use precompute")
+        sql_version = "select max(big_table_version_id) from ks_fact where company_id = %s"%(company_id)
+        self.cursor.execute(sql_version)
+        rows = self.cursor.fetchall()
+        row = rows[0]
+        version = row[0]
+        data = {}
+        for measure_id in measure_ids:
+            sql = "select date, value from ks_fact inner join ks_date on ks_fact.link_id = " +\
+                "  ks_date.link_id where ks_fact.big_table_version_id = %s and measure_id = %s"%(version, measure_id)
+            self.cursor.execute(sql)
+            rows = self.cursor.fetchall()
+            code_data ={}
+            for row in rows:
+                code_data[row[0]]= row[1]
+            data[measure_id] = code_data
+        return data
+        
     #----------------------------------------
     def getHeader(self, table_name):
         self.cursor.execute("SELECT `COLUMN_NAME`  FROM `INFORMATION_SCHEMA`." \
