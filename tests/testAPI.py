@@ -25,7 +25,7 @@ class TestMerge(unittest.TestCase):
             db_name = mysql_params[3]
             cls.db = MySQLdb.connect(localhost, user, password, db_name)
             
-    @unittest.skip("demonstrating skipping")
+    
     def test_register_files(self):
         company_name = "company 3"
         first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
@@ -37,7 +37,7 @@ class TestMerge(unittest.TestCase):
         register_raw_files(third_table,company_name, self.db)
         register_raw_files(fourth_table,company_name, self.db)
     
-    @unittest.skip("demonstrating skipping")
+    
     def test_precompute(self):
         ks_fh = filehandler(self.db)
         company_name = "company 3"

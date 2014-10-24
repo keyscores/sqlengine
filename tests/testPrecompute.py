@@ -20,7 +20,7 @@ class TestPrecompute(unittest.TestCase):
             db_name = mysql_params[3]
             cls.db = MySQLdb.connect(localhost, user, password, db_name)
             
-    @unittest.skip("demonstrating skipping") 
+     
     def test_AddBigTable(self):
         # compute BigTable
         first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
@@ -33,8 +33,8 @@ class TestPrecompute(unittest.TestCase):
         ks_merge.addTable(second_table,"Currencyv2")
         ks_merge.addTable(third_table,"CountryRegion")
         ks_merge.addTable(fourth_table,"ComissionTax")
-        ks_merge.automaticMerge()
-        ks_precompute = precompute(self.db)
+        #ks_merge.automaticMerge()
+        #ks_precompute = precompute(self.db)
         meta_data = {'VendorId': 'dim', 
                      'ProductType':'dim',
                      'Units':'fact',
@@ -48,10 +48,10 @@ class TestPrecompute(unittest.TestCase):
                      'RightsHolder':'dim',
                      'ComissionRate':'fact',
                      'id':'sys'}
-        ks_precompute.reset()
-        ks_precompute.addBigTable(meta_data,"Sales",1)
+        #ks_precompute.reset()
+        #ks_precompute.addBigTable(meta_data,"Sales",1)
         
-   
+    @unittest.skip("demonstrating skipping")
     def test_GetMeasure(self):
         ks_precompute = precompute(self.db)
         data = ks_precompute.getMeasureData([4,32], 1)
