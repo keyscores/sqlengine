@@ -1,0 +1,13 @@
+application: ks-testsql
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /.*
+  script: sqlengine.application
+
+libraries:
+- name: MySQLdb
+  version: "latest"

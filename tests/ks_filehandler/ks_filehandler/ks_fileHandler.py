@@ -1,5 +1,10 @@
 import csv
-
+import time
+try:
+    from google.appengine.ext import blobstore
+except ImportError:
+    gae_available = False
+    
 class filehandler:
 
     def __init__(self,db):
@@ -59,6 +64,25 @@ class filehandler:
         self.db.commit()
         
 
+    def updateMeasureTableBlob(self, blob_key, company):
+        self.cursor.execute("use filehandler")
+        row_counter = 0
+        blob_reader = blobstore.BlobReader(blob_key)
+        reader = csv.reader(blob_reader, delimiter=',')
+        for row in reader:
+            if row_counter == 0:
+                header = row
+                break
+        for header_col in header:
+            print header_col
+            sql_1 = "insert into ks_measures (company_name, name, alias, formula) values "
+            sql_2 = " ('%s','%s','%s','%s');"%(company, header_col, header_col, "")
+            sql = sql_1 + sql_2
+            try:
+                self.cursor.execute(sql)
+            except self.db.IntegrityError as e:
+                print (e)
+        self.db.commit()
 
             
     def reset(self):

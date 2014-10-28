@@ -120,8 +120,7 @@ class precompute:
                 
         self.cursor.execute("CREATE TABLE ks_dim_level(link_id INT, dim_level VARCHAR(50))")
         self.cursor.execute("CREATE TABLE ks_fact(link_id INT, value float,"+
-                            "measure_id INT, company_id INT, big_table_version_id INT,"+
-                            "Foreign Key (measure_id) References filehandler.ks_measures(Id))")
+                            "measure_id INT, company_id INT, big_table_version_id INT)")
         self.cursor.execute("CREATE TABLE ks_date(link_id INT, date Date)")
         self.db.commit()
         

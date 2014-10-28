@@ -9,6 +9,12 @@ def register_raw_files(file_path, company_name, db):
     table_name = pre_fix
     ks_fh.addTable(table_name, company_name, file_path)
     ks_fh.updateMeasureTable(file_path, company_name)
-   
+
+def register_raw_files2table(file_path, company_name, table_name, db):
+    ks_fh = filehandler(db)
+    ks_fh.addTable(table_name, company_name, file_path)
+    ks_fh.updateMeasureTableBlob(file_path, company_name)
+    
+
     
 

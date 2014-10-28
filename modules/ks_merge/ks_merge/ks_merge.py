@@ -3,6 +3,10 @@ from ks_graph import generalLinks
 from ks_graph import generalLinksDB
 import types
 import time
+try:
+    from google.appengine.ext import blobstore
+except ImportError:
+    gae_available = False
 
 class merge:
 
@@ -29,6 +33,28 @@ class merge:
                 self.cursor.execute(sql_insert%tuple(map(repr,row)))
             row_counter += 1    
         self.db.commit()
+        
+    def addTableBlob(self, blob_key, table_name):
+       self.cursor.execute("use merge")
+       row_counter = 0
+       sql_insert = ""
+       blob_reader = blobstore.BlobReader(blob_key)
+       reader = csv.reader(blob_reader, delimiter=',')
+       for row in reader:
+           if row_counter == 0:
+               header = row
+               print header
+               col_types = []
+               for col in row:
+                   col_types.append("VARCHAR(25)")
+               sql_insert = merge.getInsert(table_name,  header)
+               self.cursor.execute(merge.getSchema(table_name, header, col_types))
+           else:    
+               print sql_insert
+               print row     
+               self.cursor.execute(sql_insert%tuple(map(repr,row)))
+           row_counter += 1    
+       self.db.commit()
         
     def addTableCompanyCross(self, file_name, table_name, company_name):
         self.cursor.execute("use merge")
