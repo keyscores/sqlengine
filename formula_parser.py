@@ -120,6 +120,33 @@ def tree_names(tree, names=None):
 
     return names
 
+def order_formulas_by_dependency(formulas, facts):
+    deps_by_name = {}
+    for name, formula in formulas.iteritems():
+        deps_by_name[name] = tree_names(parse(formula))
+
+
+    ordered = []
+    done = set(facts)
+
+    def add_name(name):
+        if name in done:
+            return
+
+        for dep in deps_by_name.get(name, []):
+            if dep not in done:
+                if dep not in facts and dep not in formulas:
+                    raise ValueError('{0} is unknown'.format(dep))
+                add_name(dep)
+
+        ordered.append(name)
+        done.add(name)
+
+    for name in formulas:
+        add_name(name)
+
+    return ordered
+
 def parse(formula):
     mod = ast.parse(formula)
     assert len(mod.body) == 1

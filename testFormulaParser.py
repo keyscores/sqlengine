@@ -113,6 +113,29 @@ class FormulaParserTestCase(unittest.TestCase):
         tree = formula_parser.parse('A.some_method({"X":X, "Y":7})/A')
         assert 'AX' == ''.join(sorted(list(formula_parser.tree_names(tree))))
 
+    def test_order_formulas_by_dependency(self):
+        facts = ('A', 'B', 'C')
+        formulas = {
+            'V':'A*B*C',
+            'W':'V*A*B*C',
+            'X':'V*W*A*B*C',
+            'Y':'V*W*X*A*B*C',
+            'Z':'V*W*X*Y*A*B*C',
+        }
+
+        order = formula_parser.order_formulas_by_dependency(formulas, facts)
+        assert order == ['V', 'W', 'X', 'Y', 'Z']
+
+    def test_order_formulas_by_dependency_bad_reference_raises_value_error(self):
+        facts = ('A', 'B')
+        formulas = {
+            'Y':'A*B*C',
+            'Z':'Y*A*B*C',
+        }
+
+        f = lambda:formula_parser.order_formulas_by_dependency(formulas, facts)
+        self.assertRaises(ValueError, f)
+
 
 
 if __name__ == '__main__':
