@@ -95,5 +95,25 @@ class FormulaParserTestCase(unittest.TestCase):
         assert to_e('A.some_method({\'some dimension\':\'XYZ\'})') == \
                 "some_method(A,{'some dimension':'XYZ'})"
 
+    def test_tree_names_for_simple_arithmetic(self):
+        tree = formula_parser.parse('(A+B)/(C-D)*X')
+        self.assertEqual(
+            'ABCDX',
+            ''.join(sorted(list(formula_parser.tree_names(tree)))))
+
+    def test_tree_names_for_method_call_args_and_kwargs(self):
+        tree = formula_parser.parse('A.some_method(X, Y, some_arg=Z)/A')
+        assert 'AXYZ' == ''.join(sorted(list(formula_parser.tree_names(tree))))
+
+    def test_tree_names_for_method_call_with_tuple(self):
+        tree = formula_parser.parse('A.some_method((X, Y, 7))/A')
+        assert 'AXY' == ''.join(sorted(list(formula_parser.tree_names(tree))))
+
+    def test_tree_names_for_method_call_with_dict(self):
+        tree = formula_parser.parse('A.some_method({"X":X, "Y":7})/A')
+        assert 'AX' == ''.join(sorted(list(formula_parser.tree_names(tree))))
+
+
+
 if __name__ == '__main__':
     unittest.main()

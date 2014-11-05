@@ -93,6 +93,32 @@ def tree_to_expr(tree):
         )
     raise ValueError('Unsupported node type ' + tree[0])
 
+def tree_names(tree, names=None):
+    if names is None:
+        names = set()
+
+    if tree[0] == 'Name':
+        names.add(tree[1])
+    elif tree[0] == 'Tuple':
+        for i in tree[1]:
+            tree_names(i, names)
+    elif tree[0] in ('Add', 'Sub', 'Mult', 'Div'):
+        tree_names(tree[1], names)
+        tree_names(tree[2], names)
+    elif tree[0] == 'Dict':
+        for k, v in tree[1]:
+            tree_names(v, names)
+    elif tree[0] == 'MethodCall':
+        obj, method_name, args, kwargs = tree[1:]
+        if obj:
+            names.add(obj)
+        for i in args:
+            tree_names(i, names)
+        for k, v in kwargs:
+            tree_names(v, names)
+
+
+    return names
 
 def parse(formula):
     mod = ast.parse(formula)
