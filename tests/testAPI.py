@@ -1,4 +1,5 @@
 from ks_graph import generalLinks
+from ks_merge import precompute
 from ks_merge import merge
 import MySQLdb
 import unittest
@@ -27,27 +28,38 @@ class TestMerge(unittest.TestCase):
             
     
     def test_register_files(self):
-        company_name = "company 3"
-        first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
-        second_table = "./ks_filehandler/ks_filehandler/data/graph/Currencyv2.csv"    
-        third_table = "./ks_filehandler/ks_filehandler/data/CountryRegion.csv"
-        fourth_table = "./ks_filehandler/ks_filehandler/data/ComissionTax.csv"    
-        register_raw_files(first_table,company_name, self.db)
-        register_raw_files(second_table,company_name, self.db)
-        register_raw_files(third_table,company_name, self.db)
-        register_raw_files(fourth_table,company_name, self.db)
+        #company_name = "2"
+        #first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
+        #second_table = "./ks_filehandler/ks_filehandler/data/graph/Currencyv2.csv"    
+        #third_table = "./ks_filehandler/ks_filehandler/data/CountryRegion.csv"
+        #fourth_table = "./ks_filehandler/ks_filehandler/data/ComissionTax.csv"    
+        #register_raw_files(first_table,company_name, self.db)
+        #register_raw_files(second_table,company_name, self.db)
+        #register_raw_files(third_table,company_name, self.db)
+        #register_raw_files(fourth_table,company_name, self.db)
     
-    
-    def test_precompute(self):
-        ks_fh = filehandler(self.db)
-        company_name = "company 3"
-        load_precompute_normalize(company_name, self.db)
+        ##ks_precompute = precompute(self.db)
+        ##ks_precompute.reset()
+        #precompute
+        #ks_fh = filehandler(self.db)
+        #company_name = "2"
+        #load_precompute_normalize(company_name, self.db)
         
-    def test_UserAnalytics(self):
-        ks_fh = filehandler(self.db)
-        company_id = "1"
-        data = measure_data(self.db, 1, [4,32])
-        print data
+        # get measure
+        #ks_fh = filehandler(self.db)
+        #company_id = "2"
+        
+        print(measure_data(self.db, 2, [3,4],"day","0006-01-14","0006-01-14"))
+        print(measure_data(self.db, 2, [3,4],"day","0006-02-14","0006-02-14"))
+        print(measure_data(self.db, 2, [3,4],"day","0006-01-14","0006-02-14"))
+        
+        
+        print(measure_data(self.db, 2, [3,4],"day","0006-01-14","0006-02-14","Region"))
+        print(measure_data(self.db, 2, [3,4],"day","0006-01-14","0006-02-14","RightsHolder"))
+        print(measure_data(self.db, 2, [3,4],"day","0006-01-14","0006-02-14","CountryCode"))
+        
+        
+    
         
       
         

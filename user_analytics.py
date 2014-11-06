@@ -81,5 +81,9 @@ def measure_data(db, company_id, measures, frequency=None, start_date=None, end_
 
     """
     ks_precompute = precompute(db)
-    data = ks_precompute.getMeasureData(measures, company_id)
+    if groupby == None:
+        data = ks_precompute.getMeasureData(measures, company_id, start_date, end_date)
+    else:
+        data = ks_precompute.getMeasureDataGroupBy(measures, company_id,start_date, end_date,groupby)
+        
     return data
