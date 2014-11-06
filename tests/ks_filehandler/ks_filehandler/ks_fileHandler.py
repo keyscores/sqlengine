@@ -91,7 +91,7 @@ class filehandler:
         self.cursor.execute("use filehandler")
         sql = "CREATE TABLE files(Id INT PRIMARY KEY AUTO_INCREMENT, \
                  table_name VARCHAR(50), \
-                 file_name VARCHAR(200), \
+                 file_name VARCHAR(2000), \
                  company_name VARCHAR(50), stamp TIMESTAMP);"
         print sql         
         self.cursor.execute(sql)
