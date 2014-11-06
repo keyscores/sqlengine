@@ -19,8 +19,15 @@ class precompute:
         self.db.commit()
         
     def addFactCol(self, col, table, version_id, company_id):
+        # fetch measure_id
+        sql_id = "select id from filehandler.ks_measures where name = '%s';"%(col)
+        self.cursor.execute(sql_id)
+        rows = self.cursor.fetchall()
+        row = rows[0]
+        measure_id = row[0]
+        
         sql1 = "insert into ks_fact "
-        sql2 = "select ks_rows.id,%s,'%s','%s','%s' from ks_rows inner join "%(col,col, company_id, version_id)  
+        sql2 = "select ks_rows.id,%s,'%s','%s','%s' from ks_rows inner join "%(col,measure_id, company_id, version_id)  
         sql3 = "merge.%s on merge.%s.id=ks_rows.row_id where version_id=%s"%(table, table, version_id)
         sql = sql1 + sql2 + sql3
         
@@ -30,7 +37,7 @@ class precompute:
         
     def addDimCol(self, col, table, version_id,company_id):
         sql1 = "insert into ks_dim_level "
-        sql2 = "select ks_rows.id,concat('%s:',%s) from ks_rows inner join "%(col, col)  
+        sql2 = "select ks_rows.id,'%s',%s from ks_rows inner join "%(col, col)  
         sql3 = "merge.%s on merge.%s.id=ks_rows.row_id where version_id=%s"%(table, table, version_id)
         sql = sql1 + sql2 + sql3
         print sql
@@ -57,6 +64,57 @@ class precompute:
             print "col:%s, meta:%s"%(col, meta_data[col])
             addCol[meta_data[col]](col, table_name, version_id, company_id)
         self.db.commit()    
+        
+    def getMeasureData(self, measure_ids, company_id, start_date, end_date):
+        self.cursor.execute("use precompute")
+        sql_version = "select max(big_table_version_id) from ks_fact where company_id = %s"%(company_id)
+        self.cursor.execute(sql_version)
+        rows = self.cursor.fetchall()
+        row = rows[0]
+        version = row[0]
+        data = {}
+        for measure_id in measure_ids:
+            sql = "select date, sum(value) from ks_fact inner join ks_date on ks_fact.link_id = " +\
+                "  ks_date.link_id where ks_fact.big_table_version_id = " +\
+                "%s and measure_id = %s and date>='%s' and date<='%s' group by date"%(version, measure_id, start_date, end_date)
+            self.cursor.execute(sql)
+            print sql
+            rows = self.cursor.fetchall()
+            code_data ={}
+            for row in rows:
+                code_data[str(row[0])]= row[1]
+            data[measure_id] = code_data
+        return data
+    
+    #----------------------------------------
+    def getMeasureDataGroupBy(self, measure_ids, company_id, start_date, end_date,dim):
+        self.cursor.execute("use precompute")
+        sql_version = "select max(big_table_version_id) from ks_fact where company_id = %s"%(company_id)
+        self.cursor.execute(sql_version)
+        rows = self.cursor.fetchall()
+        row = rows[0]
+        version = row[0]
+        data = {}
+        for measure_id in measure_ids:
+            sql = "select date, sum(value),level from ks_fact inner join ks_date on ks_fact.link_id = " +\
+                "  ks_date.link_id inner join ks_dim_level on ks_fact.link_id = ks_dim_level.link_id where " +\
+                " ks_fact.big_table_version_id = " +\
+                "%s and measure_id = %s and dim='%s' and date>='%s'  and date<='%s' group by level,date"%(version, measure_id,dim, start_date, end_date)
+            self.cursor.execute(sql)
+            print sql
+            rows = self.cursor.fetchall()
+            date_dict ={}
+            last_level = rows[0][2]
+            level_dict = {}
+            for row in rows:
+                if row[2] != last_level:
+                     level_dict[last_level] = date_dict
+                     date_dict ={}
+                     last_level = row[2]
+                date_dict[str(row[0])]= row[1] 
+            level_dict[last_level] = date_dict
+            data[measure_id] = level_dict
+        return data
         
     #----------------------------------------
     def getHeader(self, table_name):
@@ -92,9 +150,9 @@ class precompute:
         
         self.cursor.execute("CREATE TABLE ks_rows(id INT PRIMARY KEY AUTO_INCREMENT, version_id INT, row_id INT)")
                 
-        self.cursor.execute("CREATE TABLE ks_dim_level(link_id INT, dim_level VARCHAR(50))")
+        self.cursor.execute("CREATE TABLE ks_dim_level(link_id INT, dim VARCHAR(50), level VARCHAR(50))")
         self.cursor.execute("CREATE TABLE ks_fact(link_id INT, value float,"+
-                            "name VARCHAR(50), company_id INT, big_table_version_id INT)")
+                            "measure_id INT, company_id INT, big_table_version_id INT)")
         self.cursor.execute("CREATE TABLE ks_date(link_id INT, date Date)")
         self.db.commit()
         

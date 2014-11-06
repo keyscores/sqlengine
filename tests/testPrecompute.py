@@ -33,7 +33,7 @@ class TestPrecompute(unittest.TestCase):
         ks_merge.addTable(second_table,"Currencyv2")
         ks_merge.addTable(third_table,"CountryRegion")
         ks_merge.addTable(fourth_table,"ComissionTax")
-        ks_merge.automaticMerge()
+        #ks_merge.automaticMerge()
         ks_precompute = precompute(self.db)
         meta_data = {'VendorId': 'dim', 
                      'ProductType':'dim',
@@ -51,7 +51,12 @@ class TestPrecompute(unittest.TestCase):
         ks_precompute.reset()
         ks_precompute.addBigTable(meta_data,"Sales",1)
         
-                
+    @unittest.skip("demonstrating skipping")
+    def test_GetMeasure(self):
+        ks_precompute = precompute(self.db)
+        data = ks_precompute.getMeasureData([4,32], 1)
+        print data
+        
         
     @classmethod    
     def tearDownClass(cls):

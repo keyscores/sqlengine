@@ -111,6 +111,20 @@ class TestMerge(unittest.TestCase):
         ks_merge.addTable(fourth_table,"ComissionTax")
         ks_merge.automaticMerge()
         
+    def test_MetaData(self):
+        first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
+        second_table = "./ks_filehandler/ks_filehandler/data/graph/Currencyv2.csv"    
+        third_table = "./ks_filehandler/ks_filehandler/data/CountryRegion.csv"
+        fourth_table = "./ks_filehandler/ks_filehandler/data/ComissionTax.csv"
+        ks_merge = merge(self.db)
+        ks_merge.reset()
+        ks_merge.addTable(first_table,"Sales")
+        ks_merge.addTable(second_table,"Currencyv2")
+        ks_merge.addTable(third_table,"CountryRegion")
+        ks_merge.addTable(fourth_table,"ComissionTax")
+        ks_merge.automaticMerge()
+        print(ks_merge.getMetaDataFromTable("Sales"))
+        
     @classmethod    
     def tearDownClass(cls):
         cls.db.close()    

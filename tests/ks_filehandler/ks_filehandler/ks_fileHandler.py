@@ -1,4 +1,10 @@
-
+import csv
+import time
+try:
+    from google.appengine.ext import blobstore
+except ImportError:
+    gae_available = False
+    
 class filehandler:
 
     def __init__(self,db):
@@ -39,16 +45,61 @@ class filehandler:
         rows = self.cursor.fetchall()
         return rows
         
+    def updateMeasureTable(self, file_name, company):
+        self.cursor.execute("use filehandler")
+        row_counter = 0
+        for row in csv.reader(open(file_name)):
+            if row_counter == 0:
+                header = row
+                break
+        for header_col in header:
+            print header_col
+            sql_1 = "insert into ks_measures (company_name, name, alias, formula) values "
+            sql_2 = " ('%s','%s','%s','%s');"%(company, header_col, header_col, "")
+            sql = sql_1 + sql_2
+            try:
+                self.cursor.execute(sql)
+            except self.db.IntegrityError as e:
+                print (e)
+        self.db.commit()
         
-        
+
+    def updateMeasureTableBlob(self, blob_key, company):
+        self.cursor.execute("use filehandler")
+        row_counter = 0
+        blob_reader = blobstore.BlobReader(blob_key)
+        reader = csv.reader(blob_reader, delimiter=',')
+        for row in reader:
+            if row_counter == 0:
+                header = row
+                break
+        for header_col in header:
+            print header_col
+            sql_1 = "insert into ks_measures (company_name, name, alias, formula) values "
+            sql_2 = " ('%s','%s','%s','%s');"%(company, header_col, header_col, "")
+            sql = sql_1 + sql_2
+            try:
+                self.cursor.execute(sql)
+            except self.db.IntegrityError as e:
+                print (e)
+        self.db.commit()
+
+            
     def reset(self):
         self.cursor.execute("drop database if exists filehandler")
         self.cursor.execute("create database filehandler")
         self.cursor.execute("use filehandler")
         sql = "CREATE TABLE files(Id INT PRIMARY KEY AUTO_INCREMENT, \
                  table_name VARCHAR(50), \
-                 file_name VARCHAR(200), \
+                 file_name VARCHAR(2000), \
                  company_name VARCHAR(50), stamp TIMESTAMP);"
+        print sql         
+        self.cursor.execute(sql)
+        sql = "CREATE TABLE ks_measures(Id INT PRIMARY KEY AUTO_INCREMENT, \
+                 company_name VARCHAR(100), \
+                 name VARCHAR(100) NOT NULL UNIQUE, \
+                 alias VARCHAR(100), \
+                 formula VARCHAR(200));"
         print sql         
         self.cursor.execute(sql)
         self.db.commit()
