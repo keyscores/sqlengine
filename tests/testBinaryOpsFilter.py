@@ -4,9 +4,10 @@ from ks_analytics import analytics
 import time
 import MySQLdb
 import unittest
+import formula_parser
 
 class TestSalesTaxSample(unittest.TestCase):
-    
+
     @classmethod
     def setUpClass(cls):
         #----------------------
@@ -15,7 +16,7 @@ class TestSalesTaxSample(unittest.TestCase):
         with open('mysql_setting.txt', 'r') as f:
             mysql_config = f.readline()
 
-            mysql_params = mysql_config.split(",")  
+            mysql_params = mysql_config.split(",")
             localhost = mysql_params[0]
             user = mysql_params[1]
             password = mysql_params[2]
@@ -62,7 +63,7 @@ class TestSalesTaxSample(unittest.TestCase):
                  RightsHolder VARCHAR(25), \
                  ComissionRate VARCHAR(25), \
                  TaxRate VARCHAR(25))"
-        
+
 
         sql_join = "insert into BigTable select S.id,S.VendorId,S.ProductType, "\
             "S.Units, S.RoyaltyPrice, S.DownloadDate, S.CustomerCurrency, "\
@@ -70,15 +71,15 @@ class TestSalesTaxSample(unittest.TestCase):
             "T.TaxRate from Sales S Inner Join CountryRegion C on "\
             "S.CountryCode=C.CountryCode Inner join ComissionTax T on " \
             "S.VendorId = T.VendorId and C.Region = T.Region;"
-            
+
         ks_merge.join(sql_join, sql_BigTable)
-        
+
         #----------------------
         # clean up
         #----------------------
         cursor = cls.db.cursor()
         sql = "use merge;"
-        cursor.execute(sql)        
+        cursor.execute(sql)
         sql = "ALTER TABLE BigTable change ComissionRate ComissionRate FLOAT;"
         cursor.execute(sql)
         sql = "ALTER TABLE BigTable change TaxRate TaxRate FLOAT;"
@@ -88,21 +89,40 @@ class TestSalesTaxSample(unittest.TestCase):
         # ProductType changed from D to M see documentation of test case
         sql ="update BigTable set ProductType = 'M' where VendorId='0268_20140114_SOFA_ENGLIS' and DownloadDate='6/1/14';"
         cursor.execute(sql)
-        
-        
+
+
         #----------------------
         # analytics
         #----------------------
         cls.ks_analytics = analytics(cls.db)
-        cls.ks_analytics.addFactUsingBinaryOp("NET_REVENUE", "Units", "RoyaltyPrice", "*") 
-        cls.ks_analytics.addFactUsingBinaryOp("TAXES", "NET_REVENUE","TaxRate","*")
-        cls.ks_analytics.addFactUsingBinaryOp("REVENUE_AFTER_TAX", "NET_REVENUE","TAXES","-")
-        
-    @classmethod    
+
+        formulas = {
+            # Why is this a dictionary?
+            # these formulas were originally manually ordered for dependencies
+            # for example, you see that TAXES uses NET_REVENUE in its formula
+            # so NET_REVENUE must be defined first
+            # large groups of measure can't be ordered manually
+            # this dictionary's keys can be ordered by
+            # formula_parser.order_formulas_by_dependency
+            # which will ensure these facts are defined in the right order, no
+            # matter how complex their formulas are
+            "NET_REVENUE":"Units*RoyaltyPrice",
+            "TAXES":"NET_REVENUE*TaxRate",
+            "REVENUE_AFTER_TAX":"NET_REVENUE-TAXES",
+        }
+
+        raw_facts = ['Units', 'RoyaltyPrice', 'TaxRate']
+
+        for fact in formula_parser.order_formulas_by_dependency(formulas, raw_facts):
+            cls.ks_analytics.addFactWithFormula(fact, formulas[fact])
+
+
+
+    @classmethod
     def tearDownClass(cls):
         cls.db.close()
-    
-    # Binary Op    
+
+    # Binary Op
     def test_Binary_Op_Aggregate(self):
         self.assertEqual(6, self.ks_analytics.calculate("Units","6/1/14","VendorId:0268_20140114_SOFA_ENGLIS"))
 
@@ -119,7 +139,7 @@ class TestSalesTaxSample(unittest.TestCase):
                                                                 " DownloadDate= '6/1/14' and VendorId='0268_20140114_SOFA_ENGLIS' "))
     def test_Binary_Op_Addition_without_groupby_per_record(self):
         self.assertEqual(10, self.ks_analytics.calculate("Units + RoyaltyPrice","6/1/14","VendorId:0268_20140114_SOFA_ENGLIS"))
-    
+
     def test_Binary_Op_Addition_with_groupby(self):
         self.assertEqual(10, self.ks_analytics.calculateGroupBy("sum(Units) + sum(RoyaltyPrice)",
                                                                 "VendorId, ProductType, DownloadDate",
@@ -139,11 +159,11 @@ class TestSalesTaxSample(unittest.TestCase):
     def test_Intertable_Multiplication_with_groupby_date(self):
         self.assertAlmostEqual(0.8384, self.ks_analytics.calculateGroupBy("sum(RoyaltyPrice) * sum(TaxRate*RoyaltyPrice)",
                                    "DownloadDate"," DownloadDate='6/1/14' and VendorId='0268_20140114_SOFA_ENGLIS' "))
-                               
-     
+
+
     def test_Intertable_Addition_without_groupby_per_record(self):
         self.assertAlmostEqual(4.104800001252443, self.ks_analytics.calculate("TaxRate + RoyaltyPrice","6/1/14","VendorId:0268_20140114_SOFA_ENGLIS"))
-    
+
     def test_Intertable_Addition_with_groupby(self):
         self.assertAlmostEqual(4.104800001252443, self.ks_analytics.calculateGroupBy("sum(TaxRate) + sum(RoyaltyPrice)",
                                                                 "VendorId, ProductType, DownloadDate",
@@ -155,25 +175,24 @@ class TestSalesTaxSample(unittest.TestCase):
     # Chained
     def test_Chained_Intertable(self):
         self.assertEqual(11.37120008468628, self.ks_analytics.calculate("REVENUE_AFTER_TAX","6/1/14","VendorId:0268_20140114_SOFA_ENGLIS"))
-    
+
     def test_Chained_Intertable_sm2(self):
         self.assertAlmostEqual(0.9476000070571899, self.ks_analytics.calculateSm2("REVENUE_AFTER_TAX","/","NET_REVENUE", "6/1/14",
                                                                     "VendorId:0268_20140114_SOFA_ENGLIS"))
-    @unittest.skip("demonstrating skipping")                     
+    @unittest.skip("demonstrating skipping")
     def test_Chained_Intertable_sm2_sandwich(self):
         self.assertEqual(1234, self.ks_analytics.calculateGroupBy("sum(TaxRate) + sum(RoyaltyPrice)",
                                                                 " DownloadDate",
                                                                 " DownloadDate= '6/1/14'"))
 
-    
-    
-        
-    
-    
-    
-        
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
     unittest.main()
-    
