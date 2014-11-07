@@ -9,6 +9,9 @@ from ks_filehandler import filehandler
 from register_raw_files import register_raw_files
 from load_precompute_normalize import load_precompute_normalize
 from user_analytics import measure_data
+from register_raw_files import registerFormula
+
+
 class TestMerge(unittest.TestCase):
     
     @classmethod
@@ -28,40 +31,41 @@ class TestMerge(unittest.TestCase):
             
     
     def test_register_files(self):
-        #company_name = "2"
-        #first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
-        #second_table = "./ks_filehandler/ks_filehandler/data/graph/Currencyv2.csv"    
-        #third_table = "./ks_filehandler/ks_filehandler/data/CountryRegion.csv"
-        #fourth_table = "./ks_filehandler/ks_filehandler/data/ComissionTax.csv"    
-        #register_raw_files(first_table,company_name, self.db)
-        #register_raw_files(second_table,company_name, self.db)
-        #register_raw_files(third_table,company_name, self.db)
-        #register_raw_files(fourth_table,company_name, self.db)
+        ks_fh = filehandler(self.db)
+        ks_fh.reset()
+        company_id = 2
+        first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
+        second_table = "./ks_filehandler/ks_filehandler/data/graph/Currencyv2.csv"    
+        third_table = "./ks_filehandler/ks_filehandler/data/CountryRegion.csv"
+        fourth_table = "./ks_filehandler/ks_filehandler/data/ComissionTax.csv"    
+        register_raw_files(first_table,company_id, self.db)
+        register_raw_files(second_table,company_id, self.db)
+        register_raw_files(third_table,company_id, self.db)
+        register_raw_files(fourth_table,company_id, self.db)
     
-        ##ks_precompute = precompute(self.db)
-        ##ks_precompute.reset()
+        ks_precompute = precompute(self.db)
+        ks_precompute.reset()
         #precompute
-        #ks_fh = filehandler(self.db)
-        #company_name = "2"
-        #load_precompute_normalize(company_name, self.db)
+        load_precompute_normalize(company_id, self.db)
         
         # get measure
-        #ks_fh = filehandler(self.db)
-        #company_id = "2"
         
-        print(measure_data(self.db, 2, [3,4],"day","0006-01-14","0006-01-14"))
-        print(measure_data(self.db, 2, [3,4],"day","0006-02-14","0006-02-14"))
-        print(measure_data(self.db, 2, [3,4],"day","0006-01-14","0006-02-14"))
+                
+        ks_fh.registerFormula("", "Plus", "Plus", "Units+RoyaltyPrice", "sum")
+        ks_fh.registerFormula("", "Mult", "Mult", "Units*RoyaltyPrice", "sum")
         
+        plus_id = ks_fh.getMeasureID("Plus")
+        mult_id = ks_fh.getMeasureID("Mult")
+        units_id = ks_fh.getMeasureID("Units")
+        royality_id = ks_fh.getMeasureID("RoyaltyPrice")
         
-        print(measure_data(self.db, 2, [3,4],"day","0006-01-14","0006-02-14","Region"))
-        print(measure_data(self.db, 2, [3,4],"day","0006-01-14","0006-02-14","RightsHolder"))
-        print(measure_data(self.db, 2, [3,4],"day","0006-01-14","0006-02-14","CountryCode"))
+        # MEASURE DATA DEMO raw_facts + measures with formulas
+        print(measure_data(self.db, company_id, [plus_id,mult_id,units_id,royality_id],"day","0006-01-14","0006-01-14"))
         
+        # MEASURE DATA DEMO raw_facts group by        
+        print(measure_data(self.db, company_id, [units_id, royality_id],"day","0006-01-14","0006-02-14","Region"))
         
-    
-        
-      
+        # MEASURE DATA DEMO measures with formulas group by NOT IMPLEMENTED YET
         
     @classmethod    
     def tearDownClass(cls):

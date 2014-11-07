@@ -54,13 +54,24 @@ class filehandler:
                 break
         for header_col in header:
             print header_col
-            sql_1 = "insert into ks_measures (company_name, name, alias, formula) values "
-            sql_2 = " ('%s','%s','%s','%s');"%(company, header_col, header_col, "")
+            sql_1 = "insert into ks_measures (company_name, name, alias, formula,agg_type) values "
+            sql_2 = " ('%s','%s','%s','%s','%s');"%(company, header_col, header_col, "","")
             sql = sql_1 + sql_2
             try:
                 self.cursor.execute(sql)
             except self.db.IntegrityError as e:
                 print (e)
+        self.db.commit()
+        
+    def registerFormula(self, company_id, formula_name, alias, formula, agg_type):
+        self.cursor.execute("use filehandler")
+        sql_1 = "insert into ks_measures (company_name, name, alias, formula,agg_type) values "
+        sql_2 = " ('%s','%s','%s','%s','%s');"%(company_id, formula_name, formula_name, formula, agg_type)
+        sql = sql_1 + sql_2
+        try:
+            self.cursor.execute(sql)
+        except self.db.IntegrityError as e:
+            print (e)
         self.db.commit()
         
 
@@ -84,6 +95,31 @@ class filehandler:
                 print (e)
         self.db.commit()
 
+    def getMeasureDataByID(self, id):
+        measure_data ={}
+        self.cursor.execute("use filehandler")
+        sql = "select company_name, name, alias, formula, agg_type,id from ks_measures where id = %s;"%(id)
+        self.cursor.execute(sql)
+        row = self.cursor.fetchall()
+        measure_data["company_id"] = row[0][0]
+        measure_data["name"] = row[0][1]
+        measure_data["alias"] = row[0][2]
+        measure_data["formula"] = row[0][3]
+        measure_data["agg_type"] = row[0][4]
+        measure_data["agg_type"] = row[0][5]
+        self.db.commit()
+        return measure_data
+
+    def getMeasureID(self, measure):
+        measure_data ={}
+        self.cursor.execute("use filehandler")
+        sql = "select id from ks_measures where name = '%s';"%(measure)
+        self.cursor.execute(sql)
+        row = self.cursor.fetchall()
+        measure_id = row[0][0]
+        self.db.commit()
+        return measure_id
+
             
     def reset(self):
         self.cursor.execute("drop database if exists filehandler")
@@ -99,7 +135,8 @@ class filehandler:
                  company_name VARCHAR(100), \
                  name VARCHAR(100) NOT NULL UNIQUE, \
                  alias VARCHAR(100), \
-                 formula VARCHAR(200));"
+                 formula VARCHAR(200), \
+                 agg_type VARCHAR(10));"
         print sql         
         self.cursor.execute(sql)
         self.db.commit()

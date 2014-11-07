@@ -1,4 +1,7 @@
 import types
+from ks_filehandler import filehandler
+from formula_parser import parse
+from formula_parser import tree_names
 
 class precompute:
 
@@ -64,6 +67,41 @@ class precompute:
             print "col:%s, meta:%s"%(col, meta_data[col])
             addCol[meta_data[col]](col, table_name, version_id, company_id)
         self.db.commit()    
+
+
+    def getRawDataFormula(self, formula_data, version, measure_id, start_date, end_date):
+            self.cursor.execute("use precompute")
+            #FIXXXXXXXXXXXMMEEE
+            op_dict = {}
+            op_dict["Add"]="+"
+            op_dict["Mult"]="*"
+            op = op_dict[formula_data["op"]]
+            sql = "select  date,sum(rhs.value) %s sum(lhs.value) from ks_fact as rhs inner join ks_fact as lhs "%(op) +\
+                "on rhs.link_id = lhs.link_id inner join ks_date on rhs.link_id = ks_date.link_id " +\
+                "where lhs.measure_id = %s and rhs.measure_id = %s group by date;"%(formula_data["lhs"], formula_data["rhs"])
+            self.cursor.execute(sql)
+            #print sql
+            rows = self.cursor.fetchall()
+            code_data ={}
+            for row in rows:
+                code_data[str(row[0])]= row[1]
+                code_data
+            return code_data
+
+    def getRawData(self, version, measure_id, start_date, end_date):
+            self.cursor.execute("use precompute")
+            sql = "select date, sum(value) from ks_fact inner join ks_date on ks_fact.link_id = " +\
+                "  ks_date.link_id where ks_fact.big_table_version_id = " +\
+                "%s and measure_id = %s and date>='%s' and date<='%s' group by date"%(version, measure_id, start_date, end_date)
+            self.cursor.execute(sql)
+            #print sql
+            rows = self.cursor.fetchall()
+            code_data ={}
+            for row in rows:
+                code_data[str(row[0])]= row[1]
+                code_data
+            return code_data
+        
         
     def getMeasureData(self, measure_ids, company_id, start_date, end_date):
         self.cursor.execute("use precompute")
@@ -74,18 +112,24 @@ class precompute:
         version = row[0]
         data = {}
         for measure_id in measure_ids:
-            sql = "select date, sum(value) from ks_fact inner join ks_date on ks_fact.link_id = " +\
-                "  ks_date.link_id where ks_fact.big_table_version_id = " +\
-                "%s and measure_id = %s and date>='%s' and date<='%s' group by date"%(version, measure_id, start_date, end_date)
-            self.cursor.execute(sql)
-            print sql
-            rows = self.cursor.fetchall()
-            code_data ={}
-            for row in rows:
-                code_data[str(row[0])]= row[1]
-            data[measure_id] = code_data
+            ks_fh = filehandler(self.db)
+            measure_data = ks_fh.getMeasureDataByID(measure_id)
+            if len(measure_data["formula"])>0:
+                formula_data = {}
+                formula_tree = parse(measure_data["formula"])
+                facts = tree_names(formula_tree)
+                formula_data["op"] = formula_tree[0]
+                formula_data["rhs"] = ks_fh.getMeasureID(list(facts)[0])
+                formula_data["lhs"] = ks_fh.getMeasureID(list(facts)[1])
+                formula_data["agg_type"] = measure_data["agg_type"]
+                data[measure_id] = self.getRawDataFormula(formula_data,version,  measure_id, start_date, end_date)
+                
+            else:
+                data[measure_id] = self.getRawData(version, measure_id, start_date, end_date)
         return data
     
+    
+
     #----------------------------------------
     def getMeasureDataGroupBy(self, measure_ids, company_id, start_date, end_date,dim):
         self.cursor.execute("use precompute")
@@ -101,7 +145,7 @@ class precompute:
                 " ks_fact.big_table_version_id = " +\
                 "%s and measure_id = %s and dim='%s' and date>='%s'  and date<='%s' group by level,date"%(version, measure_id,dim, start_date, end_date)
             self.cursor.execute(sql)
-            print sql
+            #print sql
             rows = self.cursor.fetchall()
             date_dict ={}
             last_level = rows[0][2]
