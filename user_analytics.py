@@ -3,14 +3,12 @@ from ks_merge import precompute
 
 
 def measure_data(db, company_id, measures, frequency=None, start_date=None, end_date=None,
-    groupby=None, measure_filter=None, dimension_filters=None, score_kpis=True):
+    dimension_filters=None, score_kpis=True):
     """
     measures - set() of measure IDs
     frequency - str of 'month', 'day' or 'quarter'
     start_date - datetime.datetime object, use data >=this
     end_date - datetime.datetime object, use data <this
-    groupby=None - str dimension name or None
-    measure_filter=None - if passed, will be a set() of measure ID
     dimension_filters=None - dictionary with dimension name keys
                               the values are a data structure meant to represent
                               a logical expression on what levels (like a WHERE clause)
@@ -85,5 +83,5 @@ def measure_data(db, company_id, measures, frequency=None, start_date=None, end_
         data = ks_precompute.getMeasureData(measures, company_id, start_date, end_date)
     else:
         data = ks_precompute.getMeasureDataGroupBy(measures, company_id,start_date, end_date,groupby)
-        
+
     return data
