@@ -5,22 +5,21 @@ from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext import blobstore
 
 
-
 import MySQLdb
 import os
 import sys
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "GAE/sqlengine/libs"))
-import networkx as nx
 sys.path.append(os.path.join(os.path.dirname(__file__), "GAE/sqlengine/libs/ks_graph/"))
-from ks_graph import generalLinksDB
 sys.path.append(os.path.join(os.path.dirname(__file__), "modules/ks_merge/"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "modules/ks_analytics/"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "tests/ks_filehandler/"))
+import networkx as nx
+from ks_graph import generalLinksDB
 from ks_merge import merge
 from ks_merge import precompute
-sys.path.append(os.path.join(os.path.dirname(__file__), "modules/ks_analytics/"))
 import ks_analytics
-sys.path.append(os.path.join(os.path.dirname(__file__), "tests/ks_filehandler/"))
 from ks_filehandler import filehandler
 
 from register_raw_files import register_raw_files2table
