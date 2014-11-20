@@ -48,9 +48,11 @@ class precompute:
         
     def addDateCol(self, col, table, version_id, company_id):
         sql1 = "insert into ks_date "
-        sql2 = "select ks_rows.id,%s from ks_rows inner join "%(col)  
-        sql3 = "merge.%s on merge.%s.id=ks_rows.row_id where version_id=%s"%(table, table, version_id)
-        sql = sql1 + sql2 + sql3
+        sql2 = "select ks_rows.id,STR_TO_DATE(%s, "%(col) 
+        sql3= "'%m/%d/%y') AS date from ks_rows inner join "  
+        sql4 = "merge.%s on merge.%s.id=ks_rows.row_id where version_id=%s"%(table, table, version_id)
+        sql = sql1 + sql2 + sql3 + sql4
+        print "********************"
         print sql
         self.cursor.execute("use precompute")
         self.cursor.execute(sql)
@@ -76,7 +78,8 @@ class precompute:
             op_dict["Add"]="+"
             op_dict["Mult"]="*"
             op = op_dict[formula_data["op"]]
-            sql = "select  date,sum(rhs.value) %s sum(lhs.value) from ks_fact as rhs inner join ks_fact as lhs "%(op) +\
+            date_format = "DATE_FORMAT(date,'%m/%d/%y')"
+            sql = "select  %s,sum(rhs.value) %s sum(lhs.value) from ks_fact as rhs inner join ks_fact as lhs "%(date_format, op) +\
                 "on rhs.link_id = lhs.link_id inner join ks_date on rhs.link_id = ks_date.link_id " +\
                 "where lhs.measure_id = %s and rhs.measure_id = %s group by date;"%(formula_data["lhs"], formula_data["rhs"])
             self.cursor.execute(sql)
@@ -90,7 +93,8 @@ class precompute:
 
     def getRawData(self, version, measure_id, start_date, end_date):
             self.cursor.execute("use precompute")
-            sql = "select date, sum(value) from ks_fact inner join ks_date on ks_fact.link_id = " +\
+            date_format = "DATE_FORMAT(date,'%m/%d/%y')"
+            sql = "select %s, sum(value) from ks_fact inner join ks_date on ks_fact.link_id = "% date_format +\
                 "  ks_date.link_id where ks_fact.big_table_version_id = " +\
                 "%s and measure_id = %s and date>='%s' and date<='%s' group by date"%(version, measure_id, start_date, end_date)
             self.cursor.execute(sql)
@@ -139,8 +143,9 @@ class precompute:
         row = rows[0]
         version = row[0]
         data = {}
+        date_format = "DATE_FORMAT(date,'%m/%d/%y')"
         for measure_id in measure_ids:
-            sql = "select date, sum(value),level from ks_fact inner join ks_date on ks_fact.link_id = " +\
+            sql = "select %s, sum(value),level from ks_fact inner join ks_date on ks_fact.link_id = "% (date_format) +\
                 "  ks_date.link_id inner join ks_dim_level on ks_fact.link_id = ks_dim_level.link_id where " +\
                 " ks_fact.big_table_version_id = " +\
                 "%s and measure_id = %s and dim='%s' and date>='%s'  and date<='%s' group by level,date"%(version, measure_id,dim, start_date, end_date)
