@@ -60,10 +60,10 @@ class TestMerge(unittest.TestCase):
         royality_id = ks_fh.getMeasureID("RoyaltyPrice")
         
         # MEASURE DATA DEMO raw_facts + measures with formulas
-        print(measure_data(self.db, company_id, [plus_id,mult_id,units_id,royality_id],"day","0006-01-14","0006-01-14"))
+        print(measure_data(self.db, company_id, [plus_id,mult_id,units_id,royality_id],"day","2014-06-01","2014-06-01"))
         
         # MEASURE DATA DEMO raw_facts group by        
-        print(measure_data(self.db, company_id, [units_id, royality_id],"day","0006-01-14","0006-02-14","Region"))
+        print(measure_data(self.db, company_id, [units_id, royality_id],"day","2014-06-01","2014-06-01","Region"))
         
         # MEASURE DATA DEMO measures with formulas group by NOT IMPLEMENTED YET
         
