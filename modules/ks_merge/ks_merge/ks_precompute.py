@@ -205,3 +205,14 @@ class precompute:
         self.cursor.execute("CREATE TABLE ks_date(link_id INT, date Date)")
         self.db.commit()
         
+    def getMaxBigTableIdForCompany(self, company_id):
+        self.cursor.execute("use precompute")
+        sql = "select max(big_table_version_id) from ks_fact where company_id = %s;"%(company_id)
+        print sql
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        id = rows[0][0]
+        return id
+        
+
+    

@@ -12,7 +12,7 @@ from user_analytics import measure_data
 from register_raw_files import registerFormula
 
 
-class TestMerge(unittest.TestCase):
+class TestAPI(unittest.TestCase):
     
     @classmethod
     def setUpClass(cls):
@@ -49,8 +49,6 @@ class TestMerge(unittest.TestCase):
         load_precompute_normalize(company_id, self.db)
         
         # get measure
-        
-                
         ks_fh.registerFormula("", "Plus", "Plus", "Units+RoyaltyPrice", "sum")
         ks_fh.registerFormula("", "Mult", "Mult", "Units*RoyaltyPrice", "sum")
         

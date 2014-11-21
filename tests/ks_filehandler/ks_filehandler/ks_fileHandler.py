@@ -120,6 +120,22 @@ class filehandler:
         self.db.commit()
         return measure_id
 
+    def getMeasureNameById(self, id):
+        self.cursor.execute("use filehandler")
+        sql = "select name from ks_measures where Id =  %s;"%(id)
+        self.cursor.execute(sql)
+        row = self.cursor.fetchall()
+        id = row[0][0]
+        return id
+    
+    def getFormulaByMeasureId(self, id):
+        self.cursor.execute("use filehandler")
+        sql = "select formula from ks_measures where Id =  %s;"%(id)
+        self.cursor.execute(sql)
+        row = self.cursor.fetchall()
+        formula = row[0][0]
+        return formula
+
             
     def reset(self):
         self.cursor.execute("drop database if exists filehandler")

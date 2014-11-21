@@ -164,13 +164,6 @@ class TestSalesTaxSample(unittest.TestCase):
                                                                 " DownloadDate",
                                                                 " DownloadDate= '6/1/14'"))
 
-    
-    
-        
-    
-    
-    
-        
 
 
 if __name__ == '__main__':

@@ -1,4 +1,5 @@
 from ks_merge import precompute
+from ks_analytics import analytics
 #Interface for the front end to create reports
 
 
@@ -81,9 +82,16 @@ def measure_data(db, company_id, measures, frequency=None, start_date=None, end_
 
     """
     ks_precompute = precompute(db)
-    if groupby == None:
-        data = ks_precompute.getMeasureData(measures, company_id, start_date, end_date)
-    else:
-        data = ks_precompute.getMeasureDataGroupBy(measures, company_id,start_date, end_date,groupby)
-        
-    return data
+    bigTable = "BigTable"+ str(ks_precompute.getMaxBigTableIdForCompany(company_id))
+    
+    ks_analytics = analytics(db)
+    
+    data = ks_analytics.getMeasureData(bigTable, 
+                                       measures, 
+                                       start_date,
+                                       end_date,
+                                       groupby, 
+                                       dimension_filters)
+    
+    return data    
+    
