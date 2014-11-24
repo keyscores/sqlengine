@@ -135,6 +135,16 @@ class filehandler:
         row = self.cursor.fetchall()
         formula = row[0][0]
         return formula
+    
+    def getAllMeasures(self):
+        self.cursor.execute("use filehandler")
+        sql = "select name, id from ks_measures" 
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        measures = []
+        for row in rows:
+            measures.append("%s [id=%s]"%(row[0],row[1]))
+        return measures
 
             
     def reset(self):

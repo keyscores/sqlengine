@@ -83,7 +83,6 @@ class TestBinaryOpsAPI(unittest.TestCase):
         #cls.ks_analytics.addFactUsingBinaryOp("TAXES", "NET_REVENUE","TaxRate","*")
         #cls.ks_analytics.addFactUsingBinaryOp("REVENUE_AFTER_TAX", "NET_REVENUE","TAXES","-")
         
-        
                 
     @classmethod
         

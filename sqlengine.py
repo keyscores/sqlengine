@@ -65,17 +65,23 @@ class MergeDemo(webapp2.RequestHandler):
             db = MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME, db='source', user='root')
         else:
             db = MySQLdb.connect(host='127.0.0.1', db='source', user='root', passwd='1193')
-        ks_merge = merge(db)
-        ks_merge.reset()
-        sales_blob_key = "AMIfv955UlTWfs9d8HWHPM6vPbnHKX_GiYzLREhpOSAlOzYXg-aO2fN0N2sugsJ15GeVRhISJmeTmpV5zlblU1gpkGcctwFH7ip4mg4eR18Y1hVLXNlvffj1ysaR3e4tdsoIkhFncmw9dpZ6eyP4E7xvy8KjjNEUtg"
-        cur_blob_key = "AMIfv959qauL3R-9UnuE9ox14Sic-IJwTx0zAD3qvDRCksANuuyXGz-W8amx5HbCC6iEsbK3igrvc-8CP6vZSy53mcZwXeDKRTYYwj4xTYs1sSGOwpHYV20twBsUhLcTcLwFgYC8sJ6DYFljXWpt64LzDWpcYNFalA"
-        country_blob_key = "AMIfv94wNLrpPOXsKChvzkpmJ5_HS6GZqQj0psFVhCCn_5CI-onYvZdmURUCaUv9vH_db8m9LtvzmJ0oz66_58wYR9rtvOPc7CIW3u7shECsIoLuZqWvMqcPColYizekx3wESBnYHUVfj1yZ3fH_mQfGIGSLD6iRbg"
-        com_blob_key = "AMIfv94--LDpjvIbXCGcSxpnixVXDtz4X1LURYZ31NUnSjvxEpACa4q4LUvnZaBzXfPPgg5LHlO-50VFOdeJbOs6T9lWdxjvogz2FbRVpOojqo2ZOaxMVrbDQjT37oXd8JveQD02Yf3WM63satu3JqmVYvU5duc29w"
-        ks_merge.addTableBlob(sales_blob_key,"Sales")
-        ks_merge.addTableBlob(cur_blob_key,"Currencyv2")
-        ks_merge.addTableBlob(country_blob_key,"CountryRegion")
-        ks_merge.addTableBlob(com_blob_key,"ComissionTax")
-        ks_merge.automaticMerge()
+        #ks_merge = merge(db)
+        #ks_merge.reset()
+        #sales_blob_key = "AMIfv955UlTWfs9d8HWHPM6vPbnHKX_GiYzLREhpOSAlOzYXg-aO2fN0N2sugsJ15GeVRhISJmeTmpV5zlblU1gpkGcctwFH7ip4mg4eR18Y1hVLXNlvffj1ysaR3e4tdsoIkhFncmw9dpZ6eyP4E7xvy8KjjNEUtg"
+        #cur_blob_key = "AMIfv959qauL3R-9UnuE9ox14Sic-IJwTx0zAD3qvDRCksANuuyXGz-W8amx5HbCC6iEsbK3igrvc-8CP6vZSy53mcZwXeDKRTYYwj4xTYs1sSGOwpHYV20twBsUhLcTcLwFgYC8sJ6DYFljXWpt64LzDWpcYNFalA"
+        #country_blob_key = "AMIfv94wNLrpPOXsKChvzkpmJ5_HS6GZqQj0psFVhCCn_5CI-onYvZdmURUCaUv9vH_db8m9LtvzmJ0oz66_58wYR9rtvOPc7CIW3u7shECsIoLuZqWvMqcPColYizekx3wESBnYHUVfj1yZ3fH_mQfGIGSLD6iRbg"
+        #com_blob_key = "AMIfv94--LDpjvIbXCGcSxpnixVXDtz4X1LURYZ31NUnSjvxEpACa4q4LUvnZaBzXfPPgg5LHlO-50VFOdeJbOs6T9lWdxjvogz2FbRVpOojqo2ZOaxMVrbDQjT37oXd8JveQD02Yf3WM63satu3JqmVYvU5duc29w"
+        #ks_merge.addTableBlob(sales_blob_key,"Sales")
+        #ks_merge.addTableBlob(cur_blob_key,"Currencyv2")
+        #ks_merge.addTableBlob(country_blob_key,"CountryRegion")
+        #ks_merge.addTableBlob(com_blob_key,"ComissionTax")
+        #ks_merge.automaticMerge()
+        
+        ks_fh = filehandler(db)
+        #ks_fh.reset()
+        measures = ks_fh.getAllMeasures()
+        self.response.write(measures)
+        
         db.close()
 
 
@@ -91,34 +97,42 @@ class APIDemo(webapp2.RequestHandler):
         
         # reset DB
         ks_fh = filehandler(db)
-        ks_fh.reset()
-        ks_merge = merge(db)
-        ks_merge.reset()
-        ks_precompute = precompute(db)
-        ks_precompute.reset()
+        #ks_fh.reset()
+        #ks_merge = merge(db)
+        #ks_merge.reset()
+        #ks_precompute = precompute(db)
+        #ks_precompute.reset()
         
         company_id = "1"
-        sales_table = "AMIfv955UlTWfs9d8HWHPM6vPbnHKX_GiYzLREhpOSAlOzYXg-aO2fN0N2sugsJ15GeVRhISJmeTmpV5zlblU1gpkGcctwFH7ip4mg4eR18Y1hVLXNlvffj1ysaR3e4tdsoIkhFncmw9dpZ6eyP4E7xvy8KjjNEUtg"
-        currency_table = "AMIfv959qauL3R-9UnuE9ox14Sic-IJwTx0zAD3qvDRCksANuuyXGz-W8amx5HbCC6iEsbK3igrvc-8CP6vZSy53mcZwXeDKRTYYwj4xTYs1sSGOwpHYV20twBsUhLcTcLwFgYC8sJ6DYFljXWpt64LzDWpcYNFalA"
-        country_table = "AMIfv94wNLrpPOXsKChvzkpmJ5_HS6GZqQj0psFVhCCn_5CI-onYvZdmURUCaUv9vH_db8m9LtvzmJ0oz66_58wYR9rtvOPc7CIW3u7shECsIoLuZqWvMqcPColYizekx3wESBnYHUVfj1yZ3fH_mQfGIGSLD6iRbg"
-        comission_table = "AMIfv94--LDpjvIbXCGcSxpnixVXDtz4X1LURYZ31NUnSjvxEpACa4q4LUvnZaBzXfPPgg5LHlO-50VFOdeJbOs6T9lWdxjvogz2FbRVpOojqo2ZOaxMVrbDQjT37oXd8JveQD02Yf3WM63satu3JqmVYvU5duc29w"
+        #sales_table = "AMIfv955UlTWfs9d8HWHPM6vPbnHKX_GiYzLREhpOSAlOzYXg-aO2fN0N2sugsJ15GeVRhISJmeTmpV5zlblU1gpkGcctwFH7ip4mg4eR18Y1hVLXNlvffj1ysaR3e4tdsoIkhFncmw9dpZ6eyP4E7xvy8KjjNEUtg"
+        #currency_table = "AMIfv959qauL3R-9UnuE9ox14Sic-IJwTx0zAD3qvDRCksANuuyXGz-W8amx5HbCC6iEsbK3igrvc-8CP6vZSy53mcZwXeDKRTYYwj4xTYs1sSGOwpHYV20twBsUhLcTcLwFgYC8sJ6DYFljXWpt64LzDWpcYNFalA"
+        #country_table = "AMIfv94wNLrpPOXsKChvzkpmJ5_HS6GZqQj0psFVhCCn_5CI-onYvZdmURUCaUv9vH_db8m9LtvzmJ0oz66_58wYR9rtvOPc7CIW3u7shECsIoLuZqWvMqcPColYizekx3wESBnYHUVfj1yZ3fH_mQfGIGSLD6iRbg"
+        #comission_table = "AMIfv94--LDpjvIbXCGcSxpnixVXDtz4X1LURYZ31NUnSjvxEpACa4q4LUvnZaBzXfPPgg5LHlO-50VFOdeJbOs6T9lWdxjvogz2FbRVpOojqo2ZOaxMVrbDQjT37oXd8JveQD02Yf3WM63satu3JqmVYvU5duc29w"
         
-        register_raw_files2table(sales_table, company_id, "Sales", db)
-        register_raw_files2table(currency_table, company_id, "Currencyv2", db)
-        register_raw_files2table(country_table, company_id, "CountryRegion", db)
-        register_raw_files2table(comission_table, company_id, "ComissionTax", db)
-        
-        
-        load_precompute_normalize_blob(company_id, db)
-        
-        self.response.write(measure_data(db, 1, [3,4],"day","0006-01-14","0006-01-14"))
-        self.response.write(measure_data(db, 1, [3,4],"day","0006-02-14","0006-02-14"))
-        self.response.write(measure_data(db, 1, [3,4],"day","0006-01-14","0006-02-14"))
+        #register_raw_files2table(sales_table, company_id, "Sales", db)
+        #register_raw_files2table(currency_table, company_id, "Currencyv2", db)
+        #register_raw_files2table(country_table, company_id, "CountryRegion", db)
+        #register_raw_files2table(comission_table, company_id, "ComissionTax", db)
         
         
-        self.response.write(measure_data(db, 1, [3,4],"day","0006-01-14","0006-02-14","Region"))
-        self.response.write(measure_data(db, 1, [3,4],"day","0006-01-14","0006-02-14","RightsHolder"))
-        self.response.write(measure_data(db, 1, [3,4],"day","0006-01-14","0006-02-14","CountryCode"))
+        #load_precompute_normalize_blob(company_id, db)
+        
+        #self.response.write(measure_data(db, 1, [3,4],"day","0006-01-14","0006-01-14"))
+        #self.response.write(measure_data(db, 1, [3,4],"day","0006-02-14","0006-02-14"))
+        #self.response.write(measure_data(db, 1, [3,4],"day","0006-01-14","0006-02-14"))
+        
+        
+        #self.response.write(measure_data(db, 1, [3,4],"day","0006-01-14","0006-02-14","Region"))
+        #self.response.write(measure_data(db, 1, [3,4],"day","0006-01-14","0006-02-14","RightsHolder"))
+        #self.response.write(measure_data(db, 1, [3,4],"day","0006-01-14","0006-02-14","CountryCode"))
+
+
+
+        measure_id = ks_fh.getMeasureID("Units")
+        measure_ids = []
+        measure_ids.append(measure_id)
+        result = measure_data(db, company_id, measure_ids, "day", "2014-06-01", "2014-06-01")
+        self.response.write(result)
        
         db.close()
 

@@ -2,6 +2,7 @@
 from ks_filehandler import filehandler
 from ks_merge import merge
 from ks_merge import precompute
+from ks_analytics import analytics
 
 def load_precompute_normalize(company_name, db):
     ks_fh = filehandler(db)
@@ -36,4 +37,16 @@ def load_precompute_normalize_blob(company_name, db):
     meta_data = ks_merge.getMetaDataFromTable("Sales")
     ks_precompute.reset()
     ks_precompute.addBigTable(meta_data,"Sales",company_name)
+    
+    id = ks_precompute.getMaxBigTableIdForCompany(company_name)
+    
+    mergeBigTable = ks_merge.getTables()
+    metaData = ks_merge.getMetaDataFromTable(mergeBigTable[0])
+                
+    ks_analytics = analytics(db)
+    newBigTable = "BigTable"+ str(ks_precompute.getMaxBigTableIdForCompany(company_name))
+    ks_analytics.reset()
+    ks_analytics.addBigTable(mergeBigTable[0], newBigTable, metaData)
+    
+    
     
