@@ -93,7 +93,7 @@ class APIDemo(webapp2.RequestHandler):
             os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')):
             db = MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME, db='source', user='root')
         else:
-            db = MySQLdb.connect(host='127.0.0.1', db='source', user='root', passwd='1193')
+            db = MySQLdb.connect(host='173.194.87.126', db='source', user='root', passwd='ZVYZM KMGYH')
         
         # reset DB
         ks_fh = filehandler(db)
