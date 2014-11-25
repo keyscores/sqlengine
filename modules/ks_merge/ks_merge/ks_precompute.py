@@ -4,7 +4,10 @@ from formula_parser import parse
 from formula_parser import tree_names
 
 class precompute:
-
+    """
+    Stores a BigTable in a normalised way. This class is used to handle
+    many companies and different versions of a BigTable for one company.
+    """
     def __init__(self,db):
         self.db = db
         self.cursor = self.db.cursor()

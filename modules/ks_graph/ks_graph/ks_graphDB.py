@@ -2,6 +2,9 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 class generalLinksDB:
+    """
+    Finds relations between tables using their headers.
+    """
     def __init__(self, tables, merge):
         self.merge = merge
         nodes = []

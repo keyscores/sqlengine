@@ -1,7 +1,9 @@
 from ks_filehandler import filehandler
 
 class analytics:
-
+    """
+    Used to compute measures on a given BigTable.
+    """
     def __init__(self,db):
         self.db = db
         self.cursor = self.db.cursor()
@@ -195,6 +197,10 @@ class analytics:
 
     #----------------------------------------
     def addBigTable(self, mergeTable, newBigTable, metaData):
+        """
+        Move merged BigTable to analytics and adjust table given metaData.
+        MetaData: (each col of the BigTable is a dimension, a fact or a date.
+        """
         sql = "CREATE TABLE analytics.%s  SELECT * FROM merge.%s;"%(newBigTable, mergeTable)
         print sql
         self.cursor.execute(sql)
@@ -204,6 +210,9 @@ class analytics:
 
     #----------------------------------------
     def changeFactType2Float(self, bigTable, metaData):
+        """
+        Adjust fact cols in BigData.
+        """
         sql = "use analytics;"
         self.cursor.execute(sql)
         for metaDatum in metaData:
@@ -213,6 +222,9 @@ class analytics:
         
    #----------------------------------------
     def addDate2BigTable(self, bigTable, metaData):
+        """
+        Import date format from BigTable and store it into the col ks_date.
+        """
         sql = "use analytics;"
         self.cursor.execute(sql)
         sql =  "alter table %s add column ks_date Date;"%(bigTable)

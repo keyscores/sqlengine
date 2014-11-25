@@ -6,6 +6,9 @@ except ImportError:
     gae_available = False
     
 class filehandler:
+    """
+    Used to register the source of customer data. 
+    """
 
     def __init__(self,db):
         self.db = db

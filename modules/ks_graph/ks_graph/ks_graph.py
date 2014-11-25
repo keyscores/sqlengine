@@ -4,6 +4,9 @@ import networkx as nx
 import os
 
 class generalLinks:
+    """
+    Finds relations between tables using their headers.
+    """
     def __init__(self, csv_files):
         nodes = []
         #add nodes
