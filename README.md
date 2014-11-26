@@ -1,12 +1,10 @@
 #SQLEngine for Keyscores
-##Pip Requirements
 
-networkx==1.9.1
 
-MySQL-python==1.2.3
 
-argparse==1.2.1
+## Requirements
 
-decorator==3.4.0
+GAE Dev Server
+>dev_appserver.py sqlengine
 
-wsgiref==0.1.2
+https://cloud.google.com/appengine/docs/python/tools/devserver
