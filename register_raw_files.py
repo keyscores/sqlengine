@@ -1,5 +1,5 @@
 #Interface to import customer files .csv .xls and register them in appropriate tables
-from ks_filehandler import filehandler
+from ks_fileHandler import filehandler
 import os
 
 def register_raw_files(file_path, company_name, db):
@@ -9,6 +9,12 @@ def register_raw_files(file_path, company_name, db):
     table_name = pre_fix
     ks_fh.addTable(table_name, company_name, file_path)
     ks_fh.updateMeasureTable(file_path, company_name)
+
+def register_url_data(file_path, table_name, company_name, db):
+    ks_fh = filehandler(db)
+    ks_fh.addTable(table_name, company_name, file_path)
+    ks_fh.updateMeasureTableURL(file_path, company_name)
+
 
 def register_raw_files2table(file_path, company_name, table_name, db):
     ks_fh = filehandler(db)

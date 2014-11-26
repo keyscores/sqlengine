@@ -1,5 +1,5 @@
 import types
-from ks_filehandler import filehandler
+from ks_fileHandler import filehandler
 from formula_parser import parse
 from formula_parser import tree_names
 

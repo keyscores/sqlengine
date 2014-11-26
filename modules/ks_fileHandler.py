@@ -1,5 +1,8 @@
 import csv
 import time
+import urllib2
+
+
 try:
     from google.appengine.ext import blobstore
 except ImportError:
@@ -52,6 +55,25 @@ class filehandler:
         self.cursor.execute("use filehandler")
         row_counter = 0
         for row in csv.reader(open(file_name)):
+            if row_counter == 0:
+                header = row
+                break
+        for header_col in header:
+            print header_col
+            sql_1 = "insert into ks_measures (company_name, name, alias, formula,agg_type) values "
+            sql_2 = " ('%s','%s','%s','%s','%s');"%(company, header_col, header_col, "","")
+            sql = sql_1 + sql_2
+            try:
+                self.cursor.execute(sql)
+            except self.db.IntegrityError as e:
+                print (e)
+        self.db.commit()
+        
+    def updateMeasureTableURL(self, url, company):
+        self.cursor.execute("use filehandler")
+        row_counter = 0
+        data = urllib2.urlopen(url)
+        for row in csv.reader(data):
             if row_counter == 0:
                 header = row
                 break

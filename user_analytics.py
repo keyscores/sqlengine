@@ -1,4 +1,4 @@
-from ks_merge import precompute
+from ks_precompute import precompute
 from ks_analytics import analytics
 #Interface for the front end to create reports
 

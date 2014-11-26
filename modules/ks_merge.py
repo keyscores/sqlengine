@@ -1,8 +1,10 @@
 import csv
 from ks_graph import generalLinks
-from ks_graph import generalLinksDB
+from ks_graphDB import generalLinksDB
 import types
 import time
+import urllib2
+
 try:
     from google.appengine.ext import blobstore
 except ImportError:
@@ -35,6 +37,28 @@ class merge:
                 self.cursor.execute(sql_insert%tuple(map(repr,row)))
             row_counter += 1    
         self.db.commit()
+        
+    def addTableURL(self, url, table_name):
+        self.cursor.execute("use merge")
+        row_counter = 0
+        sql_insert = ""
+        data = urllib2.urlopen(url)
+        for row in csv.reader(data):
+            if row_counter == 0:
+                header = row
+                col_types = []
+                for col in row:
+                    col_types.append("VARCHAR(25)")
+                sql_insert = merge.getInsert(table_name,  header)
+                print sql_insert
+                self.cursor.execute(merge.getSchema(table_name, header, col_types))
+            else:    
+                print sql_insert
+                print row     
+                self.cursor.execute(sql_insert%tuple(map(repr,row)))
+            row_counter += 1    
+        self.db.commit()
+        
         
     def addTableBlob(self, blob_key, table_name):
        self.cursor.execute("use merge")
@@ -313,7 +337,11 @@ class merge:
         for col in first_row:
             header_str =  header[counter]
             # FIXXXXXME
-            col = col.replace("%","")
+            try:
+                col = col.replace("%","")
+            except Exception as e:
+                print e
+                
             print col
             try:
                 date = time.strptime(col, '%m/%d/%y')
