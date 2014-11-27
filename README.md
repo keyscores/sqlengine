@@ -1,5 +1,5 @@
 #SQLEngine for Keyscores
-
+[![Circle CI](https://circleci.com/gh/keyscores/sqlengine.svg?style=svg)](https://circleci.com/gh/keyscores/sqlengine)
 
 
 ## Requirements
