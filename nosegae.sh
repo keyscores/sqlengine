@@ -7,4 +7,4 @@ fi
 
 GAEPATH=`dirname $GAEPATH`
 
-PYTHONPATH=modules/ nosetests -w . --with-gae  --gae-lib-root=$GAEPATH $1 $2
+PYTHONPATH=modules/:modules/networkx-1.9.1/ nosetests -w . --with-gae  --gae-lib-root=$GAEPATH $1 $2
