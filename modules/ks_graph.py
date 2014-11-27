@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import csv
 import networkx as nx
 import os
@@ -23,9 +23,9 @@ class generalLinks:
                 if (first_dim != second_dim and first_level == second_level):
                     self.G.add_edge(first_node, second_node)
               
-    def plot(self):                
-        nx.draw_networkx(self.G)
-        plt.show() # display
+ #   def plot(self):                
+ #       nx.draw_networkx(self.G)
+ #       plt.show() # display
             
     def isEdge(self, node1, node2):
         for edge in self.G.edges_iter():
