@@ -1,6 +1,6 @@
-#SQLEngine for Keyscores
-[![Circle CI](https://circleci.com/gh/keyscores/sqlengine.png)](https://circleci.com/gh/keyscores/sqlengine)
+[![Circle CI](https://circleci.com/gh/keyscores/sqlengine.svg?style=svg&circle-token=c2162c43e6e515771ece132b08806d37aff998ba)](https://circleci.com/gh/keyscores/sqlengine)
 
+#SQLEngine for Keyscores
 
 ## Requirements
 
