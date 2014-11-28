@@ -22,6 +22,10 @@ class TestPage(webapp2.RequestHandler):
 
         suite = loader.loadTestsFromModule(tests.testFormulaParser)
 
+        import tests.testSandboxing
+
+        suite.addTests(loader.loadTestsFromModule(tests.testSandboxing))
+
         test_out = StringIO()
         unittest.TextTestRunner(stream=test_out, verbosity=2).run(suite)
 
