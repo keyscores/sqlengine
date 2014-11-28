@@ -1,5 +1,4 @@
 import csv
-from ks_graph import generalLinks
 from ks_graphDB import generalLinksDB
 import types
 import time
