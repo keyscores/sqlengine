@@ -7,8 +7,11 @@ threadsafe: yes
 handlers:
 - url: /_ah/spi/.*
   script: sqlengine_api.APPLICATION
+- url: /tester.*
+  script: tests.wsgitester.application
 - url: /.*
   script: sqlengine.application
+
 
 libraries:
 - name: MySQLdb
