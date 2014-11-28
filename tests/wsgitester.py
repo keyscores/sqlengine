@@ -27,10 +27,18 @@ class TestPage(webapp2.RequestHandler):
         suite.addTests(loader.loadTestsFromModule(tests.testSandboxing))
 
         test_out = StringIO()
-        unittest.TextTestRunner(stream=test_out, verbosity=2).run(suite)
+        results = unittest.TextTestRunner(stream=test_out, verbosity=2).run(suite)
 
 
         self.response.out.write(test_out.getvalue())
+
+        if len(results.errors) > 0:
+            self.response.out.write('OVERALL:ERROR')
+        elif len(results.failures) > 0:
+            self.response.out.write('OVERALL:FAIL')
+        else:
+            self.response.out.write('OVERALL:OK')
+
 
 
 application = webapp2.WSGIApplication([

@@ -27,8 +27,12 @@ def main(args):
             pass
         time.sleep(1)
 
-    print u.read()
+    results = u.read()
     pipe.terminate()
+
+    if results.rstrip().splitlines()[-1].upper() != 'OVERALL:OK':
+        sys.exit(1)
+
 
 
 if __name__ == '__main__':
