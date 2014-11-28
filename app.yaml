@@ -5,12 +5,12 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-- url: /_ah/spi/.*
-  script: sqlengine_api.APPLICATION
 - url: /tester.*
   script: tests.wsgitester.application
-- url: /.*
-  script: sqlengine.application
+# - url: /_ah/spi/.*
+#   script: sqlengine_api.APPLICATION
+# - url: /.*
+#   script: sqlengine.application
 
 
 libraries:
