@@ -65,6 +65,8 @@ class TestPage(webapp2.RequestHandler):
 
         if failed_imports:
             print>>test_out, '=' * 60
+            print>>test_out, 'Running tests'
+            print>>test_out, '=' * 60
 
         results = unittest.TextTestRunner(
                 stream=test_out, verbosity=2).run(suite)
