@@ -34,9 +34,9 @@ class TestPage(webapp2.RequestHandler):
 
         for test_module_name in glob(os.path.join(test_path, 'test*.py')):
             test_module_name = os.path.split(test_module_name)[1][:-3]
-            print>>test_out, '=' * 80
+            print>>test_out, '=' * 60
             print>>test_out, 'tests.' + test_module_name
-            print>>test_out, '=' * 80
+            print>>test_out, '=' * 60
 
             try:
                 test_module = getattr(__import__('tests.' + test_module_name), test_module_name)
@@ -64,7 +64,7 @@ class TestPage(webapp2.RequestHandler):
             return
 
         if failed_imports:
-            print>>test_out, '=' * 80
+            print>>test_out, '=' * 60
 
         results = unittest.TextTestRunner(
                 stream=test_out, verbosity=2).run(suite)
