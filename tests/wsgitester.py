@@ -15,6 +15,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "ks_filehandler"))
 
 class TestPage(webapp2.RequestHandler):
     def get(self):
+        """
+        Returns a text/plain response of running all tests. The last line is
+        very important, it contains "OVERALL:OK" if the tests pass
+        "OVERALL:ERROR" if any errors occurred and "OVERALL:FAIL" if failures
+        (but 0 errors) occurred.
+        """
         self.response.headers['Content-Type'] = 'text/plain'
 
         loader = unittest.TestLoader()
@@ -66,6 +72,7 @@ class TestPage(webapp2.RequestHandler):
 
         self.response.out.write(test_out.getvalue())
 
+        # Last line of OVERALL:... is used by test client to report back to CircleCI'
         if failed_imports > 0 or len(results.errors) > 0:
             self.response.out.write('OVERALL:ERROR')
         elif len(results.failures) > 0:
