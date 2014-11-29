@@ -25,7 +25,7 @@ from ks_graphDB import generalLinksDB
 from ks_merge import merge
 from ks_precompute import precompute
 import ks_analytics
-from ks_fileHandler import filehandler
+from ks_filehandler import filehandler
 
 from user_analytics import measure_data
 

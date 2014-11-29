@@ -1,4 +1,4 @@
-from ks_fileHandler import filehandler
+from ks_filehandler import filehandler
 
 class analytics:
     """
@@ -67,14 +67,14 @@ class analytics:
         print sql
 
 
-    def getMeasureData(self, 
-                       bigTable, 
-                       measures, 
+    def getMeasureData(self,
+                       bigTable,
+                       measures,
                        start_date,
                        end_date,
-                       groupby, 
+                       groupby,
                        dimension_filters):
-    
+
         data = {}
         for measure_id in measures:
             measure_name = self.ks_fh.getMeasureNameById(measure_id)
@@ -82,7 +82,7 @@ class analytics:
             measure_sql = measure_name
             if len(measure_formula) > 0:
                 measure_sql = measure_formula
-                
+
             print measure_name
             date_condition = 'ks_date >="%s" and ks_date<="%s"'%(start_date, end_date)
             if groupby == None:
@@ -94,10 +94,10 @@ class analytics:
                 if dimension_filters != None:
                     where_condition = date_condition + dimension_filters
                 code_data = self.calculateGroupByAPI(bigTable, measure_sql, groupby, where_condition)
-                
+
             data[measure_name] = code_data
         return data
-    
+
 
     #----------------------------------------
     def calculate(self,fact_name, fact_date=None, dim_level=None):
@@ -219,7 +219,7 @@ class analytics:
             if metaData[metaDatum] == "fact":
                 sql = "ALTER TABLE %s change %s %s FLOAT;"%(bigTable, metaDatum, metaDatum)
                 self.cursor.execute(sql)
-        
+
    #----------------------------------------
     def addDate2BigTable(self, bigTable, metaData):
         """
@@ -231,10 +231,9 @@ class analytics:
         self.cursor.execute(sql)
         for metaDatum in metaData:
             if metaData[metaDatum] == "date":
-                sql1 = "update %s set ks_date = STR_TO_DATE(%s, "%(bigTable, metaDatum) 
+                sql1 = "update %s set ks_date = STR_TO_DATE(%s, "%(bigTable, metaDatum)
                 sql2= "'%m/%d/%y')"
                 sql = sql1 + sql2
                 print "************************************"
                 print sql
                 self.cursor.execute(sql)
-        

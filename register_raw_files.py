@@ -1,5 +1,5 @@
 #Interface to import customer files .csv .xls and register them in appropriate tables
-from ks_fileHandler import filehandler
+from ks_filehandler import filehandler
 import os
 
 def register_raw_files(file_path, company_name, db):

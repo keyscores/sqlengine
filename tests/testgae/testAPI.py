@@ -4,7 +4,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../modules/"))
 print sys.path
 
-from ks_fileHandler import filehandler
+from ks_filehandler import filehandler
 from ks_merge import merge
 from ks_analytics import analytics
 from ks_precompute import precompute

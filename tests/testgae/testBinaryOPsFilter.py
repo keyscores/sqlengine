@@ -1,4 +1,4 @@
-from ks_fileHandler import filehandler
+from ks_filehandler import filehandler
 from ks_merge import merge
 from ks_analytics import analytics
 from ks_precompute import precompute
