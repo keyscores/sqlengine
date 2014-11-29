@@ -19,6 +19,7 @@ def main(args):
 
     pipe = subprocess.Popen([os.path.join(gae_path, 'dev_appserver.py'), os.getcwd()])
 
+    u = None
     for retry in range(20):
         try:
             u = urllib.urlopen('http://localhost:8080/tester')
@@ -27,7 +28,12 @@ def main(args):
             pass
         time.sleep(1)
 
-    results = u.read()
+    if u is None:
+        print 'Failed to read test response'
+        sys.exit(1)
+    else:
+        results = u.read()
+
     pipe.terminate()
 
     if results.rstrip().splitlines()[-1].upper() != 'OVERALL:OK':
