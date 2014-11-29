@@ -12,7 +12,7 @@ class TestSalesTaxSample(unittest.TestCase):
         #----------------------
         # set up db
         #----------------------
-        with open('mysql_setting.txt', 'r') as f:
+        with open('tests/mysql_setting.txt', 'r') as f:
             mysql_config = f.readline()
 
             mysql_params = mysql_config.split(",")  
