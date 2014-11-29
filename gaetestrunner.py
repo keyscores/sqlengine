@@ -17,7 +17,7 @@ def main(args):
         print 'Pass the full path to Google AppEngine SDK on the command line'
         return
 
-    pipe = subprocess.Popen([os.path.join(gae_path, 'dev_appserver.py'), os.getcwd()])
+    pipe = subprocess.Popen([os.path.join(gae_path, 'dev_appserver.py'), os.getcwd(), '--skip_sdk_update_check', 'true'])
 
     u = None
     for retry in range(20):
@@ -31,12 +31,14 @@ def main(args):
     if u is None:
         print 'Failed to read test response'
         sys.exit(1)
+        results = ''
     else:
         results = u.read()
+        print results
 
     pipe.terminate()
 
-    if results.rstrip().splitlines()[-1].upper() != 'OVERALL:OK':
+    if not results or results.rstrip().splitlines()[-1].upper() != 'OVERALL:OK':
         sys.exit(1)
 
 
