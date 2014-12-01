@@ -30,10 +30,10 @@ class TestBinaryOpsAPI(unittest.TestCase):
         cls.ks_fh = filehandler(cls.db)
         cls.ks_fh.reset()
         cls.company_id = 1
-        register_raw_files("./tests/data2/Sales", cls.company_id, cls.db)
-        register_raw_files("./tests/data2/Currencyv2", cls.company_id, cls.db)
-        register_raw_files("./tests/data2/CountryRegion", cls.company_id, cls.db)
-        register_raw_files("./tests/data2/ComissionTax",cls.company_id, cls.db)
+        register_raw_files("./tests/data2/Sales.csv", cls.company_id, cls.db)
+        register_raw_files("./tests/data2/Currencyv2.csv", cls.company_id, cls.db)
+        register_raw_files("./tests/data2/CountryRegion.csv", cls.company_id, cls.db)
+        register_raw_files("./tests/data2/ComissionTax.csv",cls.company_id, cls.db)
     
         ks_precompute = precompute(cls.db)
         ks_precompute.reset()

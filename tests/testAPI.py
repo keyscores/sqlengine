@@ -44,10 +44,10 @@ class TestAPI(unittest.TestCase):
         ks_fh = filehandler(self.db)
         ks_fh.reset()
         company_id = 1
-        register_raw_files("./tests/data2/Sales", company_id, self.db)
-        register_raw_files("./tests/data2/Currencyv2", company_id, self.db)
-        register_raw_files("./tests/data2/CountryRegion", company_id, self.db)
-        register_raw_files("./tests/data2/ComissionTax",company_id, self.db)
+        register_raw_files("./tests/data2/Sales.csv", company_id, self.db)
+        register_raw_files("./tests/data2/Currencyv2.csv", company_id, self.db)
+        register_raw_files("./tests/data2/CountryRegion.csv", company_id, self.db)
+        register_raw_files("./tests/data2/ComissionTax.csv",company_id, self.db)
 
         ks_precompute = precompute(self.db)
         ks_precompute.reset()
