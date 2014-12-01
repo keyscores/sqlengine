@@ -22,5 +22,11 @@ DB = {
 }
 
 def setting(key):
-    db_name = os.environ.get('KS_DB') or 'default'
+    from_file = None
+    if os.path.isfile('ks_db_name.txt'):
+        with open('ks_db_name.txt', 'r') as f:
+            from_file = f.readline().strip()
+
+
+    db_name = from_file or os.environ.get('KS_DB') or 'default'
     return DB.get(db_name, {}).get(key, '')

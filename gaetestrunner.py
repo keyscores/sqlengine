@@ -17,26 +17,34 @@ def main(args):
         print 'Pass the full path to Google AppEngine SDK on the command line'
         return
 
-    pipe = subprocess.Popen([os.path.join(gae_path, 'dev_appserver.py'), os.getcwd(), '--skip_sdk_update_check', 'true'])
+    try:
+        if os.environ.get('KS_DB'):
+            with open('ks_db_name.txt', 'w') as f:
+                print>>f, os.environ.get('KS_DB')
 
-    u = None
-    for retry in range(20):
-        try:
-            u = urllib.urlopen('http://localhost:8080/tester')
-            break
-        except IOError:
-            pass
-        time.sleep(1)
+        pipe = subprocess.Popen([os.path.join(gae_path, 'dev_appserver.py'), os.getcwd(), '--skip_sdk_update_check', 'true'])
 
-    if u is None:
-        print 'Failed to read test response'
-        sys.exit(1)
-        results = ''
-    else:
-        results = u.read()
-        print results
+        u = None
+        for retry in range(20):
+            try:
+                u = urllib.urlopen('http://localhost:8080/tester')
+                break
+            except IOError:
+                pass
+            time.sleep(1)
 
-    pipe.terminate()
+        if u is None:
+            print 'Failed to read test response'
+            sys.exit(1)
+            results = ''
+        else:
+            results = u.read()
+            print results
+
+    finally:
+        if os.path.isfile('ks_db_name.txt'):
+            os.remove('ks_db_name.txt')
+        pipe.terminate()
 
     if not results or results.rstrip().splitlines()[-1].upper() != 'OVERALL:OK':
         sys.exit(1)
