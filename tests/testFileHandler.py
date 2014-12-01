@@ -28,7 +28,7 @@ class TestMerge(unittest.TestCase):
         ks_fh = filehandler(self.db)
         #ks_fh.reset()
         company = "company 1"
-        first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
+        first_table = "./tests/data2/Sales.csv"
         ks_fh.updateMeasureTable(first_table, company)
         
       
