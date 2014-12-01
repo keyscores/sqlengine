@@ -1,4 +1,4 @@
-from ks_graph import generalLinksDB
+from ks_graphDB import generalLinksDB
 from ks_merge import merge
 import ks_db_settings
 import unittest

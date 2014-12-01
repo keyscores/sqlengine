@@ -1,7 +1,7 @@
 from ks_filehandler import filehandler
 from ks_merge import merge
 from ks_analytics import analytics
-from ks_merge import precompute
+from ks_precompute import precompute
 import ks_db_settings
 import time
 import MySQLdb

@@ -16,9 +16,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "modules/ks_merge/"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "modules/ks_analytics/"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "tests/ks_filehandler/"))
 import networkx as nx
-from ks_graph import generalLinksDB
 from ks_merge import merge
-from ks_merge import precompute
+from ks_precompute import precompute
 import ks_analytics
 from ks_filehandler import filehandler
 

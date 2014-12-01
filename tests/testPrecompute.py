@@ -1,4 +1,4 @@
-from ks_merge import precompute
+from ks_precompute import precompute
 from ks_merge import merge
 import ks_db_settings
 import MySQLdb
