@@ -1,6 +1,7 @@
 from ks_filehandler import filehandler
 from ks_merge import merge
 from ks_analytics import analytics
+import ks_db_settings
 import time
 import MySQLdb
 import unittest
@@ -12,56 +13,52 @@ class TestSalesTaxSample(unittest.TestCase):
         #----------------------
         # set up db
         #----------------------
-        with open('tests/mysql_setting.txt', 'r') as f:
-            mysql_config = f.readline()
-
-            mysql_params = mysql_config.split(",")  
-            localhost = mysql_params[0]
-            user = mysql_params[1]
-            password = mysql_params[2]
-            db_name = mysql_params[3]
-            cls.db = MySQLdb.connect(localhost, user, password, db_name)
+        cls.db = MySQLdb.connect(
+                ks_db_settings.setting('host'), 
+                ks_db_settings.setting('user'), 
+                ks_db_settings.setting('password'), 
+                ks_db_settings.setting('database'))
 
 
-            #----------------------
-            # filehandler
-            #----------------------
-            file_handler = filehandler(cls.db)
-            file_handler.reset()
-            file_handler.addTable("Sales", "1","Sales.csv")
-            file_handler.addTable("Sales", "2","SalesCustomerTwo.csv")
+        #----------------------
+        # filehandler
+        #----------------------
+        file_handler = filehandler(cls.db)
+        file_handler.reset()
+        file_handler.addTable("Sales", "1","Sales.csv")
+        file_handler.addTable("Sales", "2","SalesCustomerTwo.csv")
 
-            file_handler.addTable("ComissionTax", "1","ComissionTax.csv")
-            file_handler.addTable("ComissionTax","2","ComissionTaxCustomerTwo.csv")
+        file_handler.addTable("ComissionTax", "1","ComissionTax.csv")
+        file_handler.addTable("ComissionTax","2","ComissionTaxCustomerTwo.csv")
 
-            file_handler.addTable("CountryRegion", "1","CountryRegion.csv")
-            file_handler.addTable("CountryRegion","2","CountryRegionCustomerTwo.csv")
+        file_handler.addTable("CountryRegion", "1","CountryRegion.csv")
+        file_handler.addTable("CountryRegion","2","CountryRegionCustomerTwo.csv")
 
-            file_handler.addTable("Currency2","1","Currencyv2.csv")
-            time.sleep(1)
-            file_handler.addTable("Sales", "1","SalesNewVersion.csv")
-            print(file_handler.getLatestTable("Sales", "2"))
+        file_handler.addTable("Currency2","1","Currencyv2.csv")
+        time.sleep(1)
+        file_handler.addTable("Sales", "1","SalesNewVersion.csv")
+        print(file_handler.getLatestTable("Sales", "2"))
 
-            #----------------------
-            # merge
-            #----------------------
-            ks_merge = merge(cls.db)
-            ks_merge.reset()
-            ks_merge.addTable("./ks_filehandler/ks_filehandler/data/Sales.csv","Sales")
-            ks_merge.addTable("./ks_filehandler/ks_filehandler/data/CountryRegion.csv","CountryRegion")
-            ks_merge.addTable("./ks_filehandler/ks_filehandler/data/ComissionTax.csv","ComissionTax")
-            sql_BigTable = "CREATE TABLE BigTable(id INT PRIMARY KEY AUTO_INCREMENT, \
-                 VendorId VARCHAR(25), \
-                 ProductType VARCHAR(25), \
-                 Units FLOAT, \
-                 RoyaltyPrice FLOAT, \
-                 DownloadDate VARCHAR(25), \
-                 CustomerCurrency VARCHAR(25), \
-                 CountryCode VARCHAR(25), \
-                 Region VARCHAR(25), \
-                 RightsHolder VARCHAR(25), \
-                 ComissionRate VARCHAR(25), \
-                 TaxRate VARCHAR(25))"
+        #----------------------
+        # merge
+        #----------------------
+        ks_merge = merge(cls.db)
+        ks_merge.reset()
+        ks_merge.addTable("./ks_filehandler/ks_filehandler/data/Sales.csv","Sales")
+        ks_merge.addTable("./ks_filehandler/ks_filehandler/data/CountryRegion.csv","CountryRegion")
+        ks_merge.addTable("./ks_filehandler/ks_filehandler/data/ComissionTax.csv","ComissionTax")
+        sql_BigTable = "CREATE TABLE BigTable(id INT PRIMARY KEY AUTO_INCREMENT, \
+             VendorId VARCHAR(25), \
+             ProductType VARCHAR(25), \
+             Units FLOAT, \
+             RoyaltyPrice FLOAT, \
+             DownloadDate VARCHAR(25), \
+             CustomerCurrency VARCHAR(25), \
+             CountryCode VARCHAR(25), \
+             Region VARCHAR(25), \
+             RightsHolder VARCHAR(25), \
+             ComissionRate VARCHAR(25), \
+             TaxRate VARCHAR(25))"
         
 
         sql_join = "insert into BigTable select S.id,S.VendorId,S.ProductType, "\

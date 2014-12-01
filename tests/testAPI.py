@@ -8,6 +8,7 @@ from ks_filehandler import filehandler
 from ks_merge import merge
 from ks_analytics import analytics
 from ks_precompute import precompute
+import ks_db_settings
 import time
 import MySQLdb
 import unittest
@@ -30,15 +31,14 @@ class TestAPI(unittest.TestCase):
         #----------------------
         # set up db
         #----------------------
-        #with open('tests/tests/mysql_setting.txt', 'r') as f:
-        #    mysql_config = f.readline()
-        #    mysql_params = mysql_config.split(",")
-        #    localhost = mysql_params[0]
-        #    user = mysql_params[1]
-        #    password = mysql_params[2]
-        #    db_name = mysql_params[3]
 
-        cls.db = MySQLdb.connect("173.194.87.126", "root", "ZVYZM KMGYH", "source")
+        cls.db = MySQLdb.connect(
+                ks_db_settings.setting('host'), 
+                ks_db_settings.setting('user'), 
+                ks_db_settings.setting('password'), 
+                ks_db_settings.setting('database'))
+
+
 
     def test_load_files(self):
         ks_fh = filehandler(self.db)

@@ -1,5 +1,6 @@
 from ks_graph import generalLinks
 from ks_merge import merge
+import ks_db_settings
 import MySQLdb
 import unittest
 
@@ -10,15 +11,11 @@ class TestMerge(unittest.TestCase):
         #----------------------
         # set up db
         #----------------------
-        with open('tests/mysql_setting.txt', 'r') as f:
-            mysql_config = f.readline()
-
-            mysql_params = mysql_config.split(",")  
-            localhost = mysql_params[0]
-            user = mysql_params[1]
-            password = mysql_params[2]
-            db_name = mysql_params[3]
-            cls.db = MySQLdb.connect(localhost, user, password, db_name)
+        cls.db = MySQLdb.connect(
+                ks_db_settings.setting('host'), 
+                ks_db_settings.setting('user'), 
+                ks_db_settings.setting('password'), 
+                ks_db_settings.setting('database'))
             
      
     def test_IS_UNIQUE_COL_CASE1(self):
