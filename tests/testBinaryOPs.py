@@ -8,7 +8,7 @@ import MySQLdb
 import unittest
 
 # import API
-from register_raw_files import register_raw_files, register_url_data
+from register_raw_files import register_raw_files
 from load_precompute_normalize import load_precompute_normalize, load_precompute_normalize_URL
 from user_analytics import measure_data
 from register_raw_files import registerFormula
@@ -30,14 +30,10 @@ class TestBinaryOpsAPI(unittest.TestCase):
         cls.ks_fh = filehandler(cls.db)
         cls.ks_fh.reset()
         cls.company_id = 1
-        first_table = "http://199.127.226.118/sqlengine/Sales.csv"
-        second_table = "http://199.127.226.118/sqlengine/Currencyv2.csv"    
-        third_table = "http://199.127.226.118/sqlengine/CountryRegion.csv"
-        fourth_table = "http://199.127.226.118/sqlengine/ComissionTax.csv"    
-        register_url_data(first_table, "Sales", cls.company_id, cls.db)
-        register_url_data(second_table, "Currencyv2", cls.company_id, cls.db)
-        register_url_data(third_table, "CountryRegion", cls.company_id, cls.db)
-        register_url_data(fourth_table, "ComissionTax",cls.company_id, cls.db)
+        register_raw_files("./tests/data2/Sales", cls.company_id, cls.db)
+        register_raw_files("./tests/data2/Currencyv2", cls.company_id, cls.db)
+        register_raw_files("./tests/data2/CountryRegion", cls.company_id, cls.db)
+        register_raw_files("./tests/data2/ComissionTax",cls.company_id, cls.db)
     
         ks_precompute = precompute(cls.db)
         ks_precompute.reset()

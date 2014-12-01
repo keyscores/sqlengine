@@ -6,6 +6,7 @@ print sys.path
 
 from ks_filehandler import filehandler
 from ks_merge import merge
+
 from ks_analytics import analytics
 from ks_precompute import precompute
 import ks_db_settings
@@ -15,10 +16,9 @@ import unittest
 
 
 # import API
-from register_raw_files import register_url_data
 from load_precompute_normalize import load_precompute_normalize_URL
 from user_analytics import measure_data
-from register_raw_files import registerFormula
+from register_raw_files import registerFormula, register_raw_files
 
 
 import unittest
@@ -44,14 +44,10 @@ class TestAPI(unittest.TestCase):
         ks_fh = filehandler(self.db)
         ks_fh.reset()
         company_id = 1
-        first_table = "http://199.127.226.118/sqlengine/Sales.csv"
-        second_table = "http://199.127.226.118/sqlengine/Currencyv2.csv"
-        third_table = "http://199.127.226.118/sqlengine/CountryRegion.csv"
-        fourth_table = "http://199.127.226.118/sqlengine/ComissionTax.csv"
-        register_url_data(first_table, "Sales", company_id, self.db)
-        register_url_data(second_table, "Currencyv2", company_id, self.db)
-        register_url_data(third_table, "CountryRegion", company_id, self.db)
-        register_url_data(fourth_table, "ComissionTax",company_id, self.db)
+        register_raw_files("./tests/data2/Sales", company_id, self.db)
+        register_raw_files("./tests/data2/Currencyv2", company_id, self.db)
+        register_raw_files("./tests/data2/CountryRegion", company_id, self.db)
+        register_raw_files("./tests/data2/ComissionTax",company_id, self.db)
 
         ks_precompute = precompute(self.db)
         ks_precompute.reset()
