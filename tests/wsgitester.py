@@ -32,8 +32,17 @@ class TestPage(webapp2.RequestHandler):
         failed_imports = 0
         suite = None
 
+        test_filter = self.request.get('filter')
+
         for test_module_name in glob(os.path.join(test_path, 'test*.py')):
             test_module_name = os.path.split(test_module_name)[1][:-3]
+            if test_filter:
+                if test_filter[0] == '-':
+                    if test_module_name == test_filter[1:]:
+                        continue
+                elif test_module_name != test_filter:
+                    continue
+
             print>>test_out, '=' * 60
             print>>test_out, 'tests.' + test_module_name
             print>>test_out, '=' * 60

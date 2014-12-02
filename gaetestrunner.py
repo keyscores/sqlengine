@@ -6,7 +6,7 @@ import os
 import time
 
 def main(args):
-    if len(args) != 1:
+    if len(args) not in (1, 2):
         print 'Pass the full path to Google AppEngine SDK on the command line'
         return
 
@@ -16,6 +16,11 @@ def main(args):
         print
         print 'Pass the full path to Google AppEngine SDK on the command line'
         return
+
+    if len(args) == 2:
+        filter_param = '?filter=' + urllib.quote(args[1])
+    else:
+        filter_param = ''
 
     try:
         if os.environ.get('KS_DB'):
@@ -27,7 +32,7 @@ def main(args):
         u = None
         for retry in range(20):
             try:
-                u = urllib.urlopen('http://localhost:8080/tester')
+                u = urllib.urlopen('http://localhost:8080/tester' + filter_param)
                 break
             except IOError:
                 pass
