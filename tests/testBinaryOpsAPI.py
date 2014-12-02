@@ -81,9 +81,9 @@ class TestBinaryOpsAPI(unittest.TestCase):
         #cls.ks_analytics.addFactUsingBinaryOp("REVENUE_AFTER_TAX", "NET_REVENUE","TAXES","-")
         
                 
-    @classmethod
-        
+    @classmethod        
     def tearDownClass(cls):
+        ks_db_settings.reset_all(cls.db)
         cls.db.close()
 
 

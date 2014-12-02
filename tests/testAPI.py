@@ -38,7 +38,10 @@ class TestAPI(unittest.TestCase):
                 ks_db_settings.setting('password'), 
                 ks_db_settings.setting('database'))
 
-
+    @classmethod
+    def tearDownClass(cls):
+        ks_db_settings.reset_all(cls.db)
+        cls.db.close()
 
     def test_load_files(self):
         ks_fh = filehandler(self.db)

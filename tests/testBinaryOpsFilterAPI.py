@@ -82,9 +82,9 @@ class TestBinaryOpsAPI(unittest.TestCase):
         
         
                 
-    @classmethod
-        
+    @classmethod        
     def tearDownClass(cls):
+        ks_db_settings.reset_all(cls.db)
         cls.db.close()
 
 

@@ -21,6 +21,16 @@ DB = {
     }
 }
 
+def reset_all(db):
+    from ks_merge import merge
+    from ks_analytics import analytics
+    from ks_precompute import precompute
+    from ks_filehandler import filehandler
+
+    for klass in [merge, analytics, precompute, filehandler]:
+        instance = klass(db)
+        instance.reset()
+
 def setting(key):
     from_file = None
     if os.path.isfile('ks_db_name.txt'):

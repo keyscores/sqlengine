@@ -17,7 +17,11 @@ class TestGraph(unittest.TestCase):
                 ks_db_settings.setting('password'), 
                 ks_db_settings.setting('database'))
 
-    
+    @classmethod
+    def tearDownClass(cls):
+        ks_db_settings.reset_all(cls.db)
+        cls.db.close()
+            
     def test_Two_Tables_One_Link_Case1(self):
         first_table = "./ks_filehandler/ks_filehandler/data/Sales.csv"
         second_table = "./ks_filehandler/ks_filehandler/data/CountryRegion.csv"

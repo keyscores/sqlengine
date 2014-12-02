@@ -94,6 +94,7 @@ class TestSalesTaxSample(unittest.TestCase):
         
     @classmethod    
     def tearDownClass(cls):
+        ks_db_settings.reset_all(cls.db)
         cls.db.close()
         
     def test_NETREVENUE(self):
