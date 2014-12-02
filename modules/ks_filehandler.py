@@ -20,6 +20,7 @@ class filehandler:
     def addTable(self, table_name, company, file_name):
         sql1 =  "insert into files (table_name, company_name, stamp, file_name) values ("
         sql2 = "'%s','%s',CURRENT_TIMESTAMP,'%s')"%(table_name, company, file_name)
+        self.cursor.execute("use filehandler")
         print sql1 + sql2
         self.cursor.execute(sql1 + sql2)
         self.db.commit()
@@ -27,6 +28,7 @@ class filehandler:
     
     def getLatestTable(self, table_name, company_name):    
         # get lates timestamp for table and company
+        self.cursor.execute("use filehandler")
         sql_latest_stamp1 = "select max(stamp) from files where company_name = "
         sql_latest_stamp2 = "'%s' and table_name = '%s'"%(company_name, table_name)
         sql_latest_stamp = sql_latest_stamp1 + sql_latest_stamp2
@@ -43,12 +45,14 @@ class filehandler:
         return table_id
    
     def getLatestTablesByCompany(self, company_name):
+        self.cursor.execute("use filehandler")
         sql = "select max(stamp),table_name,file_name from files where company_name='%s' group by table_name ;"%(company_name)
         self.cursor.execute(sql)
         rows = self.cursor.fetchall()
         return rows
         
     def updateMeasureTable(self, file_name, company):
+        self.cursor.execute("use filehandler")
         row_counter = 0
         for row in csv.reader(open(file_name)):
             if row_counter == 0:
@@ -66,6 +70,7 @@ class filehandler:
         self.db.commit()
         
     def updateMeasureTableURL(self, url, company):
+        self.cursor.execute("use filehandler")
         row_counter = 0
         data = urllib2.urlopen(url)
         for row in csv.reader(data):
@@ -84,6 +89,7 @@ class filehandler:
         self.db.commit()
         
     def registerFormula(self, company_id, formula_name, alias, formula, agg_type):
+        self.cursor.execute("use filehandler")
         sql_1 = "insert into ks_measures (company_name, name, alias, formula,agg_type) values "
         sql_2 = " ('%s','%s','%s','%s','%s');"%(company_id, formula_name, formula_name, formula, agg_type)
         sql = sql_1 + sql_2
@@ -95,6 +101,7 @@ class filehandler:
         
 
     def updateMeasureTableBlob(self, blob_key, company):
+        self.cursor.execute("use filehandler")
         row_counter = 0
         blob_reader = blobstore.BlobReader(blob_key)
         reader = csv.reader(blob_reader, delimiter=',')
@@ -115,6 +122,7 @@ class filehandler:
 
     def getMeasureDataByID(self, id):
         measure_data ={}
+        self.cursor.execute("use filehandler")
         sql = "select company_name, name, alias, formula, agg_type,id from ks_measures where id = %s;"%(id)
         self.cursor.execute(sql)
         row = self.cursor.fetchall()
@@ -129,6 +137,7 @@ class filehandler:
 
     def getMeasureID(self, measure):
         measure_data ={}
+        self.cursor.execute("use filehandler")
         sql = "select id from ks_measures where name = '%s';"%(measure)
         self.cursor.execute(sql)
         row = self.cursor.fetchall()
@@ -137,6 +146,7 @@ class filehandler:
         return measure_id
 
     def getMeasureNameById(self, id):
+        self.cursor.execute("use filehandler")
         sql = "select name from ks_measures where Id =  %s;"%(id)
         self.cursor.execute(sql)
         row = self.cursor.fetchall()
@@ -144,6 +154,7 @@ class filehandler:
         return id
     
     def getFormulaByMeasureId(self, id):
+        self.cursor.execute("use filehandler")
         sql = "select formula from ks_measures where Id =  %s;"%(id)
         self.cursor.execute(sql)
         row = self.cursor.fetchall()
@@ -151,6 +162,7 @@ class filehandler:
         return formula
     
     def getAllMeasures(self):
+        self.cursor.execute("use filehandler")
         sql = "select name, id from ks_measures" 
         self.cursor.execute(sql)
         rows = self.cursor.fetchall()
@@ -161,8 +173,9 @@ class filehandler:
 
             
     def reset(self):
-        self.cursor.execute("drop table if exists files")
-        self.cursor.execute("drop table if exists ks_measures")
+        self.cursor.execute("drop database if exists filehandler")
+        self.cursor.execute("create database filehandler")
+        self.cursor.execute("use filehandler")
         sql = "CREATE TABLE files(Id INT PRIMARY KEY AUTO_INCREMENT, \
                  table_name VARCHAR(50), \
                  file_name VARCHAR(2000), \

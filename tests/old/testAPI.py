@@ -16,7 +16,7 @@ import unittest
 
 
 # import API
-from load_precompute_normalize import load_precompute_normalize_URL
+from load_precompute_normalize import load_precompute_normalize
 from user_analytics import measure_data
 from register_raw_files import registerFormula, register_raw_files
 
@@ -56,7 +56,7 @@ class TestAPI(unittest.TestCase):
         ks_precompute.reset()
         precompute
         ks_merge = merge(self.db)
-        load_precompute_normalize_URL(company_id, self.db)
+        load_precompute_normalize(company_id, self.db)
 
         ks_fh.registerFormula("", "Plus", "Plus", "Units+RoyaltyPrice", "sum")
         ks_fh.registerFormula("", "Mult", "Mult", "Units*RoyaltyPrice", "sum")

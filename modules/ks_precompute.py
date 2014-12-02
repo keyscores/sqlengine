@@ -19,6 +19,7 @@ class precompute:
         self.addCols(table_name, version_id, meta_data, company_id)
         
     def addRows(self, version_id, table_name):
+        self.cursor.execute("use precompute")
         sql = "insert into ks_rows(version_id,row_id) select %s,id from merge.%s"%(version_id, table_name)
         self.cursor.execute(sql)
         self.db.commit()
@@ -56,12 +57,14 @@ class precompute:
         sql = sql1 + sql2 + sql3 + sql4
         print "********************"
         print sql
+        self.cursor.execute("use precompute")
         self.cursor.execute(sql)
     
     def addSysCol(self, col, table, version_id, company_id):
         print "add Fact: " + col
     
     def addCols(self, table_name, version_id, meta_data, company_id):
+        self.cursor.execute("use precompute")
         header = self.getHeader(table_name)
         print "header: %s"%(header)
         addCol = {"fact":self.addFactCol,"dim":self.addDimCol,"date":self.addDateCol,"sys":self.addSysCol}
@@ -72,40 +75,43 @@ class precompute:
 
 
     def getRawDataFormula(self, formula_data, version, measure_id, start_date, end_date):
-        #FIXME
-        op_dict = {}
-        op_dict["Add"]="+"
-        op_dict["Mult"]="*"
-        op = op_dict[formula_data["op"]]
-        date_format = "DATE_FORMAT(date,'%m/%d/%y')"
-        sql = "select  %s,sum(rhs.value) %s sum(lhs.value) from ks_fact as rhs inner join ks_fact as lhs "%(date_format, op) +\
-            "on rhs.link_id = lhs.link_id inner join ks_date on rhs.link_id = ks_date.link_id " +\
-            "where lhs.measure_id = %s and rhs.measure_id = %s group by date;"%(formula_data["lhs"], formula_data["rhs"])
-        self.cursor.execute(sql)
-        #print sql
-        rows = self.cursor.fetchall()
-        code_data ={}
-        for row in rows:
-            code_data[str(row[0])]= row[1]
-            code_data
-        return code_data
+            self.cursor.execute("use precompute")
+            #FIXXXXXXXXXXXMMEEE
+            op_dict = {}
+            op_dict["Add"]="+"
+            op_dict["Mult"]="*"
+            op = op_dict[formula_data["op"]]
+            date_format = "DATE_FORMAT(date,'%m/%d/%y')"
+            sql = "select  %s,sum(rhs.value) %s sum(lhs.value) from ks_fact as rhs inner join ks_fact as lhs "%(date_format, op) +\
+                "on rhs.link_id = lhs.link_id inner join ks_date on rhs.link_id = ks_date.link_id " +\
+                "where lhs.measure_id = %s and rhs.measure_id = %s group by date;"%(formula_data["lhs"], formula_data["rhs"])
+            self.cursor.execute(sql)
+            #print sql
+            rows = self.cursor.fetchall()
+            code_data ={}
+            for row in rows:
+                code_data[str(row[0])]= row[1]
+                code_data
+            return code_data
 
     def getRawData(self, version, measure_id, start_date, end_date):
-        date_format = "DATE_FORMAT(date,'%m/%d/%y')"
-        sql = "select %s, sum(value) from ks_fact inner join ks_date on ks_fact.link_id = "% date_format +\
-            "  ks_date.link_id where ks_fact.big_table_version_id = " +\
-            "%s and measure_id = %s and date>='%s' and date<='%s' group by date"%(version, measure_id, start_date, end_date)
-        self.cursor.execute(sql)
-        #print sql
-        rows = self.cursor.fetchall()
-        code_data ={}
-        for row in rows:
-            code_data[str(row[0])]= row[1]
-            code_data
-        return code_data
+            self.cursor.execute("use precompute")
+            date_format = "DATE_FORMAT(date,'%m/%d/%y')"
+            sql = "select %s, sum(value) from ks_fact inner join ks_date on ks_fact.link_id = "% date_format +\
+                "  ks_date.link_id where ks_fact.big_table_version_id = " +\
+                "%s and measure_id = %s and date>='%s' and date<='%s' group by date"%(version, measure_id, start_date, end_date)
+            self.cursor.execute(sql)
+            #print sql
+            rows = self.cursor.fetchall()
+            code_data ={}
+            for row in rows:
+                code_data[str(row[0])]= row[1]
+                code_data
+            return code_data
         
         
     def getMeasureData(self, measure_ids, company_id, start_date, end_date):
+        self.cursor.execute("use precompute")
         sql_version = "select max(big_table_version_id) from ks_fact where company_id = %s"%(company_id)
         self.cursor.execute(sql_version)
         rows = self.cursor.fetchall()
@@ -133,6 +139,7 @@ class precompute:
 
     #----------------------------------------
     def getMeasureDataGroupBy(self, measure_ids, company_id, start_date, end_date,dim):
+        self.cursor.execute("use precompute")
         sql_version = "select max(big_table_version_id) from ks_fact where company_id = %s"%(company_id)
         self.cursor.execute(sql_version)
         rows = self.cursor.fetchall()
@@ -175,6 +182,7 @@ class precompute:
         return header
     
     def addVersion(self):
+        self.cursor.execute("use precompute")
         self.cursor.execute("insert into ks_big_table (version) values(current_timestamp)")
         # get max link _id
         sql = "select max(id) from ks_big_table;"
@@ -186,8 +194,9 @@ class precompute:
         return max_version_id
         
     def reset(self):
-        for table in ['ks_big_table', 'ks_rows', 'ks_dim_level', 'ks_fact', 'ks_date']:
-            self.cursor.execute("drop table if exists %s" % table)
+        self.cursor.execute("drop database if exists precompute")
+        self.cursor.execute("create database precompute")
+        self.cursor.execute("use precompute")
         self.cursor.execute("CREATE TABLE ks_big_table(id INT PRIMARY KEY AUTO_INCREMENT, \
                  version timestamp)")
         
@@ -200,6 +209,7 @@ class precompute:
         self.db.commit()
         
     def getMaxBigTableIdForCompany(self, company_id):
+        self.cursor.execute("use precompute")
         sql = "select max(big_table_version_id) from ks_fact where company_id = %s;"%(company_id)
         print sql
         self.cursor.execute(sql)

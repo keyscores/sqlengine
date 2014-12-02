@@ -16,10 +16,22 @@ def load_precompute_normalize(company_name, db):
 
     ks_merge.automaticMerge()
 
+    mergeBigTable = ks_merge.getTables()
     ks_precompute = precompute(db)
-    meta_data = ks_merge.getMetaDataFromTable("Sales")
+    meta_data = ks_merge.getMetaDataFromTable(mergeBigTable[0])
     ks_precompute.reset()
-    ks_precompute.addBigTable(meta_data,"Sales",company_name)
+    ks_precompute.addBigTable(meta_data,mergeBigTable[0],company_name)
+
+    id = ks_precompute.getMaxBigTableIdForCompany(company_name)
+
+
+    metaData = ks_merge.getMetaDataFromTable(mergeBigTable[0])
+
+    ks_analytics = analytics(db)
+    newBigTable = "BigTable"+ str(ks_precompute.getMaxBigTableIdForCompany(company_name))
+    ks_analytics.reset()
+    ks_analytics.addBigTable(mergeBigTable[0], newBigTable, metaData)
+    
 
 def load_precompute_normalize_blob(company_name, db):
     ks_fh = filehandler(db)
