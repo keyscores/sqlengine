@@ -94,7 +94,7 @@ class TestPage(webapp2.RequestHandler):
         else:
             self.response.out.write('OVERALL:OK')
 
-        self.response.out.write("done")
+
 
 application = webapp2.WSGIApplication([
     ('.*', TestPage),
