@@ -12,6 +12,15 @@ from StringIO import StringIO
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'modules')))
 sys.path.append(os.path.join(os.path.dirname(__file__), "ks_filehandler"))
 
+class ResponseWrapper(object):
+    def __init__(self, response):
+        self.response = response
+    def write(self, *args, **kwargs):
+        self.response.write(*args, **kwargs)
+    def flush(self, *args, **kwargs):
+        pass
+    def close(self, *args, **kwargs):
+        pass
 
 class TestPage(webapp2.RequestHandler):
     def get(self):
@@ -67,7 +76,7 @@ class TestPage(webapp2.RequestHandler):
             self.response.out.write(test_out.getvalue())
             
             results = unittest.TextTestRunner(
-                stream=self.response, verbosity=2).run(suite)
+                stream=ResponseWrapper(self.response), verbosity=2).run(suite)
             
 
             failure_sum += len(results.failures)
