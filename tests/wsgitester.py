@@ -30,11 +30,11 @@ class TestPage(webapp2.RequestHandler):
         test_out = StringIO()
 
         failed_imports = 0
-        suite = None
 
         test_filter = self.request.get('filter')
 
         error_sum = 0
+        failure_sum = 0
         for test_module_name in glob(os.path.join(test_path, 'test*.py')):
             test_module_name = os.path.split(test_module_name)[1][:-3]
             if test_filter:
@@ -59,37 +59,24 @@ class TestPage(webapp2.RequestHandler):
                 continue
 
             suite = None
-            if suite is None:
-                suite = loader.loadTestsFromModule(test_module)
-                print>>test_out, 'initialized suite', test_module_name
-            else:
-                suite.addTests(loader.loadTestsFromModule(test_module))
-                print>>test_out, 'added to suite', test_module_name
+            suite = loader.loadTestsFromModule(test_module)
+            print>>test_out, 'initialized suite', test_module_name
 
             print>>test_out, 'OK'
             
             results = unittest.TextTestRunner(
                 stream=test_out, verbosity=2).run(suite)
-            if len(results.failures)>0:
-                error_sum += 1
-       
+            
+            failure_sum += len(results.failures)
+            error_sum += len(results.errors)       
 
-        if suite is None:
-            self.response.out.write(test_out.getvalue())
-            self.response.out.write('OVERALL:ERROR')
-            return
+        self.response.out.write(test_out.getvalue())
 
-        if failed_imports:
-            print>>test_out, '=' * 60
-            print>>test_out, 'Running tests'
-            print>>test_out, '=' * 60
-
-  
 
         # Last line of OVERALL:... is used by test client to report back to CircleCI'
         if failed_imports > 0 or error_sum > 0:
             self.response.out.write('OVERALL:ERROR')
-        elif len(results.failures) > 0:
+        elif failure_sum > 0:
             self.response.out.write('OVERALL:FAIL')
         else:
             self.response.out.write('OVERALL:OK')
