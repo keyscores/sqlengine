@@ -27,7 +27,6 @@ class TestPage(webapp2.RequestHandler):
 
         test_path = os.path.dirname(__file__)
 
-        test_out = StringIO()
 
         failed_imports = 0
 
@@ -44,6 +43,7 @@ class TestPage(webapp2.RequestHandler):
                 elif test_module_name != test_filter:
                     continue
 
+            test_out = StringIO()
             print>>test_out, '=' * 60
             print>>test_out, 'tests.' + test_module_name
             print>>test_out, '=' * 60
@@ -63,14 +63,16 @@ class TestPage(webapp2.RequestHandler):
             print>>test_out, 'initialized suite', test_module_name
 
             print>>test_out, 'OK'
+
+            self.response.out.write(test_out.getvalue())
             
             results = unittest.TextTestRunner(
-                stream=test_out, verbosity=2).run(suite)
+                stream=self.response, verbosity=2).run(suite)
             
+
             failure_sum += len(results.failures)
             error_sum += len(results.errors)       
 
-        self.response.out.write(test_out.getvalue())
 
 
         # Last line of OVERALL:... is used by test client to report back to CircleCI'
