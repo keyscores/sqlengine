@@ -65,6 +65,7 @@ class TestPage(webapp2.RequestHandler):
                 traceback.print_tb(tb, None, test_out)
                 print>>test_out, typ, err
                 failed_imports += 1
+                self.response.out.write(test_out.getvalue())
                 continue
 
             suite = None
@@ -72,7 +73,6 @@ class TestPage(webapp2.RequestHandler):
             print>>test_out, 'initialized suite', test_module_name
 
             print>>test_out, 'OK'
-
             self.response.out.write(test_out.getvalue())
             
             results = unittest.TextTestRunner(
