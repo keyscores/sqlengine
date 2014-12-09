@@ -20,7 +20,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
         #----------------------
         # set up db
         #----------------------
-        cls.db = ks_db_setting.connect()
+        cls.db = ks_db_settings.connect()
 
         cls.ks_fh = filehandler(cls.db)
         cls.ks_fh.reset()

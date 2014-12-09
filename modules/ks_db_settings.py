@@ -1,4 +1,5 @@
 import os
+import MySQLdb
 
 DB = {
     'local':{
@@ -39,7 +40,7 @@ def connect():
 
     db_name = from_file or os.environ.get('KS_DB') or 'default'
 
-    if key == 'default':
+    if db_name == 'default':
         _INSTANCE_NAME = 'ks-sqlengine:test'
         return MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME,
                 db='source', user='root')
