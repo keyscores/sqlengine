@@ -3,9 +3,9 @@ import os
 DB = {
     'local':{
         'host':'127.0.0.1',
-        'user':'sqlengine_test',
-        'database':'sqlengine_test',
-        'password':'ZVYZM KMGYH',
+        'user':'root',
+        'database':'source',
+        # 'password':'source',
     },
     'circleci':{
         'host':'127.0.0.1',
@@ -30,6 +30,26 @@ def reset_all(db):
     for klass in [merge, analytics, precompute, filehandler]:
         instance = klass(db)
         instance.reset()
+
+def connect():
+    from_file = None
+    if os.path.isfile('ks_db_name.txt'):
+        with open('ks_db_name.txt', 'r') as f:
+            from_file = f.readline().strip()
+
+    db_name = from_file or os.environ.get('KS_DB') or 'default'
+
+    if key == 'default':
+        _INSTANCE_NAME = 'ks-sqlengine:test'
+        return MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME,
+                db='source', user='root')
+    else:
+
+        return MySQLdb.connect(
+                setting('host'), 
+                setting('user'), 
+                setting('password'), 
+                setting('database'))
 
 def setting(key):
     from_file = None

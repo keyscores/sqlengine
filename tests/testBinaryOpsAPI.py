@@ -20,11 +20,7 @@ class TestBinaryOpsAPI(unittest.TestCase):
         #----------------------
         # set up db
         #----------------------
-        cls.db = MySQLdb.connect(
-                ks_db_settings.setting('host'), 
-                ks_db_settings.setting('user'), 
-                ks_db_settings.setting('password'), 
-                ks_db_settings.setting('database'))
+        cls.db = ks_db_setting.connect()
 
         cls.ks_fh = filehandler(cls.db)
         cls.ks_fh.reset()
