@@ -32,13 +32,16 @@ def reset_all(db):
         instance = klass(db)
         instance.reset()
 
-def connect():
+def get_db_name():
     from_file = None
     if os.path.isfile('ks_db_name.txt'):
         with open('ks_db_name.txt', 'r') as f:
             from_file = f.readline().strip()
 
     db_name = from_file or os.environ.get('KS_DB') or 'default'
+
+def connect():
+    db_name = get_db_name()
 
     if db_name == 'cloud':
         _INSTANCE_NAME = 'ks-sqlengine:test'
@@ -53,11 +56,6 @@ def connect():
                 setting('database'))
 
 def setting(key):
-    from_file = None
-    if os.path.isfile('ks_db_name.txt'):
-        with open('ks_db_name.txt', 'r') as f:
-            from_file = f.readline().strip()
+    db_name = get_db_name()
 
-
-    db_name = from_file or os.environ.get('KS_DB') or 'default'
     return DB.get(db_name, {}).get(key, '')
