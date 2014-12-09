@@ -52,11 +52,16 @@ def connect():
 
     if db_name == 'gae-cloud':
         _INSTANCE_NAME = 'ks-sqlengine:test'
+        print 'Connecting to gae-cloud'
         return MySQLdb.connect(unix_socket='/cloudsql/' + _INSTANCE_NAME,
                 db='source', user='root')
     else:
         if db_name not in DB:
             raise ValueError('Unknown db %s' % db_name)
+
+        print "USING THE FOLLOWING DB CONNECTION PARAMS"
+        print 'host', setting('host'), '/ user', setting('user'), '/ password', setting('password'), '/ database', setting('database')
+
         return MySQLdb.connect(
                 setting('host'), 
                 setting('user'), 
