@@ -6,8 +6,13 @@ import os
 import time
 
 def main(args):
-    if len(args) not in (1, 2):
-        print 'Pass the full path to Google AppEngine SDK on the command line'
+    if '-h' in args or '--help' in 'args' or len(args) == 0:
+        print 'Usage:'
+        print 'python gaetestrunner.py path-to-GAE-SDK [+|-test-filter] [db-env-name]'
+        print
+        print 'Filters must be preceded by a "+" (positive filter, "run only this test")'
+        print 'or a "-", negative filter "run all but this test"'
+        print 'currently, only one filter is supported'
         return
 
     gae_path = args[0]
@@ -17,22 +22,35 @@ def main(args):
         print 'Pass the full path to Google AppEngine SDK on the command line'
         return
 
-    if len(args) == 2:
-        filter_param = '?filter=' + urllib.quote(args[1])
-    else:
-        filter_param = ''
+    filter_param = ''
+    db_name = ''
+    if len(args) > 1:
+        for a in args[1:]:
+            if a[0] == '+':
+                filter_param = '?filter=' + urllib.quote(a[1:])
+            elif a[0] == '-':
+                filter_param = '?filter=' + urllib.quote(a)
+            else:
+                db_name = a
 
+
+    pipe = None
     try:
-        if os.environ.get('KS_DB'):
+        if db_name:
             with open('ks_db_name.txt', 'w') as f:
-                print>>f, os.environ.get('KS_DB')
+                print>>f, db_name
+
+        print 'db_name is', db_name or '(default)'
+        print 'filter:', filter_param or '(None)'
 
         pipe = subprocess.Popen([os.path.join(gae_path, 'dev_appserver.py'), os.getcwd(), '--skip_sdk_update_check', 'true'])
 
+        url = 'http://localhost:8080/tester' + filter_param
+        print 'running tests at URL', url
         u = None
         for retry in range(20):
             try:
-                u = urllib.urlopen('http://localhost:8080/tester' + filter_param)
+                u = urllib.urlopen(url)
                 break
             except IOError:
                 pass
@@ -49,7 +67,8 @@ def main(args):
     finally:
         if os.path.isfile('ks_db_name.txt'):
             os.remove('ks_db_name.txt')
-        pipe.terminate()
+        if pipe:
+            pipe.terminate()
 
     if not results or results.rstrip().splitlines()[-1].upper() != 'OVERALL:OK':
         sys.exit(1)
