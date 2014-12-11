@@ -81,6 +81,8 @@ class merge:
                 print row     
                 self.cursor.execute(sql_insert%tuple(map(repr,row)))
             row_counter += 1    
+        sql = "alter table %s convert to character set utf8 collate utf8_unicode_ci"%table_name
+        self.cursor.execute(sql)
         self.db.commit()
         
     def addTableBlob(self, blob_key, table_name):
