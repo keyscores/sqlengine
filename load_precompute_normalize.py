@@ -22,6 +22,12 @@ def load_precompute_normalize(company_name, db):
     ks_precompute.reset()
     ks_precompute.addBigTable(meta_data,mergeBigTable[0],company_name)
 
+    metaData = ks_merge.getMetaDataFromTable(mergeBigTable[0])
+    ks_analytics = analytics(db)
+    newBigTable = "BigTable"+ str(ks_precompute.getMaxBigTableIdForCompany(company_name))
+    ks_analytics.reset()
+    ks_analytics.addBigTable(mergeBigTable[0], newBigTable, metaData)
+    db.commit()
     
     
 def load_precompute_normalize_CsvPy(company_name, db):

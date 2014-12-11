@@ -1,18 +1,13 @@
 from ks_filehandler import filehandler
-from ks_merge import merge
 from ks_analytics import analytics
 from ks_precompute import precompute
 import ks_db_settings
-import time
-import MySQLdb
 import unittest
 
 # import API
 from register_raw_files import register_raw_files
 from load_precompute_normalize import load_precompute_normalize
 from user_analytics import measure_data
-from register_raw_files import registerFormula
-
 
 
 class TestCompany2(unittest.TestCase):
@@ -42,16 +37,8 @@ class TestCompany2(unittest.TestCase):
         ks_precompute.reset()
         #precompute
         load_precompute_normalize(cls.company_id, cls.db)
-        
-        id = ks_precompute.getMaxBigTableIdForCompany(cls.company_id)
-        ks_merge = merge(cls.db)
-        mergeBigTable = ks_merge.getTables()
-        metaData = ks_merge.getMetaDataFromTable(mergeBigTable[0])
-                
-        cls.ks_analytics = analytics(cls.db)
         newBigTable = "BigTable"+ str(ks_precompute.getMaxBigTableIdForCompany(cls.company_id))
-        cls.ks_analytics.reset()
-        cls.ks_analytics.addBigTable(mergeBigTable[0], newBigTable, metaData)
+        cls.ks_analytics = analytics(cls.db)
         
         #clean up
         sql ="update %s set TaxRate = TaxRate/100;"%("analytics."+newBigTable)
