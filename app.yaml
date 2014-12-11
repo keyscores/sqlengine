@@ -7,17 +7,9 @@ threadsafe: yes
 handlers:
 - url: /tester.*
   script: tests.wsgitester.application
-# - url: /_ah/spi/.*
-#   script: sqlengine_api.APPLICATION
-# - url: /.*
-#   script: sqlengine.application
-
 
 libraries:
 - name: MySQLdb
   version: "latest"
 
 
-# You must include the Endpoints library if you wish to serve an API.
-- name: endpoints
-  version: 1.0
