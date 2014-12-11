@@ -41,6 +41,7 @@ class analytics:
                              right_hand_fact,
                              op, bigtable):
 
+        self.cursor.execute("use analytics;")
         sql =  "alter table %s add column %s FLOAT;"%(bigtable, new_fact_name)
         print sql
         self.cursor.execute(sql)
@@ -49,7 +50,6 @@ class analytics:
                                                   op,
                                                   right_hand_fact)
         self.cursor.execute(sql)
-        sql = "use analytics;"
         self.cursor.execute(sql)
         self.db.commit()
         print sql

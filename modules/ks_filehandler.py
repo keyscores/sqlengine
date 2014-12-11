@@ -1,6 +1,7 @@
 import csv
 import time
 import urllib2
+import csvPy
 
 
 try:
@@ -69,6 +70,24 @@ class filehandler:
                 print (e)
         self.db.commit()
         
+    def updateMeasureTableCsvPy(self, table_name, company):
+        self.cursor.execute("use filehandler")
+        row_counter = 0
+        for row in csvPy.csv_dict[table_name]:
+            if row_counter == 0:
+                header = row
+                break
+        for header_col in header:
+            print header_col
+            sql_1 = "insert into ks_measures (company_name, name, alias, formula,agg_type) values "
+            sql_2 = " ('%s','%s','%s','%s','%s');"%(company, header_col, header_col, "","")
+            sql = sql_1 + sql_2
+            try:
+                self.cursor.execute(sql)
+            except self.db.IntegrityError as e:
+                print (e)
+        self.db.commit()
+    
     def updateMeasureTableURL(self, url, company):
         self.cursor.execute("use filehandler")
         row_counter = 0

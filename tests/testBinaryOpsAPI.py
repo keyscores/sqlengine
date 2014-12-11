@@ -25,10 +25,10 @@ class TestBinaryOpsAPI(unittest.TestCase):
         cls.ks_fh = filehandler(cls.db)
         cls.ks_fh.reset()
         cls.company_id = 1
-        first_table = "./tests/data2/Sales.csv"
-        second_table = "./tests/data2/Currencyv2.csv"    
-        third_table = "./tests/data2/CountryRegion.csv"
-        fourth_table = "./tests/data2/ComissionTax.csv"    
+        first_table = "./data2/Sales.csv"
+        second_table = "./data2/Currencyv2.csv"    
+        third_table = "./data2/CountryRegion.csv"
+        fourth_table = "./data2/ComissionTax.csv"    
         register_raw_files(first_table,cls.company_id, cls.db)
         register_raw_files(second_table,cls.company_id, cls.db)
         register_raw_files(third_table,cls.company_id, cls.db)
