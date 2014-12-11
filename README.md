@@ -34,7 +34,7 @@ https://cloud.google.com/appengine/docs/python/tools/devserver
 **csvPy:** Stores csv files for static testing.
 
 ## testing
-(1) python gaetestrunner.py ~/google_appengine/ dev-local [test on local server]    
-(2) python gaetestrunner.py ~/google_appengine/ circle-cloud [test on google sql]     
-(3) python gaetestrunner.py -h [get help]    
-(4) python testBinaryOpsAPI.py [copy file ks_dbname.txt with dev-local into test folder; fast pure python testing]  
+- python gaetestrunner.py ~/google_appengine/ dev-local [test on local server]    
+- python gaetestrunner.py ~/google_appengine/ circle-cloud [test on google sql]     
+- python gaetestrunner.py -h [get help]    
+- python testBinaryOpsAPI.py [copy file ks_dbname.txt with dev-local into test folder; fast pure python testing]  
