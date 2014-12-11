@@ -256,6 +256,8 @@ class merge:
         self.cursor.execute(sql_drop1)
         self.cursor.execute(sql_drop2)
         self.cursor.execute(sql_rename)
+        sql = "alter table %s convert to character set utf8 collate utf8_unicode_ci"%(first_table)
+        self.cursor.execute(sql)
         self.db.commit()
        
     
@@ -299,6 +301,8 @@ class merge:
         self.cursor.execute(sql_drop1)
         self.cursor.execute(sql_drop2)
         self.cursor.execute(sql_rename)
+        sql = "alter table %s convert to character set utf8 collate utf8_unicode_ci"%(first_table)
+        self.cursor.execute(sql)
         self.db.commit()
         
         
