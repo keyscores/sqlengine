@@ -36,13 +36,6 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
         newBigTable = "BigTable"+ str(ks_precompute.getMaxBigTableIdForCompany(cls.company_id))
         cls.ks_analytics = analytics(cls.db)
         
-        #clean up
-        sql ="update %s set TaxRate = TaxRate/100;"%("analytics."+newBigTable)
-        cls.db.cursor().execute(sql)
-        # ProductType changed from D to M see documentation of test case
-        sql ="update %s set ProductType = 'M' where VendorId='0268_20140114_SOFA_ENGLIS' and DownloadDate='6/1/14';"%("analytics."+newBigTable)
-        cls.db.cursor().execute(sql)
-        
         cls.ks_analytics.addFactUsingBinaryOpAPI("NET_REVENUE", "Units", "RoyaltyPrice", "*", newBigTable) 
         cls.ks_analytics.addFactUsingBinaryOpAPI("TAXES", "NET_REVENUE","TaxRate","*", newBigTable)
         cls.ks_analytics.addFactUsingBinaryOpAPI("REVENUE_AFTER_TAX", "NET_REVENUE","TAXES","-", newBigTable)
