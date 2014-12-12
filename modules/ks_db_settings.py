@@ -66,7 +66,8 @@ def connect():
                 setting('host'), 
                 setting('user'), 
                 setting('password'), 
-                setting('database'))
+                setting('database'),
+                charset='utf8')
 
 def setting(key):
     db_name = get_db_name()
