@@ -1,17 +1,14 @@
 from ks_filehandler import filehandler
-from ks_merge import merge
 from ks_analytics import analytics
 from ks_precompute import precompute
 import ks_db_settings
-import time
-import MySQLdb
 import unittest
 
 # import API
-from register_raw_files import register_raw_files, register_raw_filesCsvPy
-from load_precompute_normalize import load_precompute_normalize, load_precompute_normalize_CsvPy
+from register_raw_files import register_raw_filesCsvPy
+from load_precompute_normalize import load_precompute_normalize_CsvPy
 from user_analytics import measure_data
-from register_raw_files import registerFormula
+
 
 class TestBinaryOpsAPI(unittest.TestCase):
     

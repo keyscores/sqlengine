@@ -6,8 +6,8 @@ import time
 import unittest
 
 # import API
-from register_raw_files import register_raw_files
-from load_precompute_normalize import load_precompute_normalize
+from register_raw_files import register_raw_filesCsvPy
+from load_precompute_normalize import load_precompute_normalize_CsvPy
 from user_analytics import measure_data
 
 
@@ -23,35 +23,22 @@ class TestNewVersion(unittest.TestCase):
         cls.ks_fh = filehandler(cls.db)
         cls.ks_fh.reset()
         cls.company_id = 1
-        first_table = "./tests/data2/Sales.csv"
-        second_table = "./tests/data2/Currencyv2.csv"    
-        third_table = "./tests/data2/CountryRegion.csv"
-        fourth_table = "./tests/data2/ComissionTax.csv"    
         
-        new_version_sales = "./tests/data2/version/Sales.csv"
-        new_version_tax = "./tests/data2/version/ComissionTax.csv"
-        
-        register_raw_files(first_table,cls.company_id, cls.db)
-        register_raw_files(second_table,cls.company_id, cls.db)
-        register_raw_files(third_table,cls.company_id, cls.db)
-        register_raw_files(fourth_table,cls.company_id, cls.db)
-        
-        # fake newer time stamp for new version
-        time.sleep(1)
-        register_raw_files(new_version_sales, cls.company_id, cls.db)
-        #register_raw_files(new_version_tax, cls.company_id, cls.db)
-        # fake replacement of new version on filesystem
+        register_raw_filesCsvPy("Sales_new_version",cls.company_id, cls.db)
+        register_raw_filesCsvPy("CurrencyV2",cls.company_id, cls.db)
+        register_raw_filesCsvPy("ComissionTax_new_version",cls.company_id, cls.db)
+        register_raw_filesCsvPy("CountryRegion",cls.company_id, cls.db)
+                
         sql = 'update files set file_name = "./tests/data2/version/Sales.csv" where file_name = "./tests/data2/Sales.csv"'
         cls.db.cursor().execute(sql)
         sql = 'update files set file_name = "./tests/data2/version/ComissionTax.csv" where file_name = "./tests/data2/ComissionTax.csv"'
         cls.db.cursor().execute(sql)
-        
     
     
         ks_precompute = precompute(cls.db)
         ks_precompute.reset()
         #precompute
-        load_precompute_normalize(cls.company_id, cls.db)
+        load_precompute_normalize_CsvPy(cls.company_id, cls.db)
         newBigTable = "BigTable"+ str(ks_precompute.getMaxBigTableIdForCompany(cls.company_id))
         cls.ks_analytics = analytics(cls.db)
         
