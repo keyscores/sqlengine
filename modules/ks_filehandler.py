@@ -1,5 +1,4 @@
 import csv
-import time
 import urllib2
 import csvPy
 
@@ -139,10 +138,10 @@ class filehandler:
                 print (e)
         self.db.commit()
 
-    def getMeasureDataByID(self, id):
+    def getMeasureDataByID(self, measure_id):
         measure_data ={}
         self.cursor.execute("use filehandler")
-        sql = "select company_name, name, alias, formula, agg_type,id from ks_measures where id = %s;"%(id)
+        sql = "select company_name, name, alias, formula, agg_type,id from ks_measures where id = %s;"%(measure_id)
         self.cursor.execute(sql)
         row = self.cursor.fetchall()
         measure_data["company_id"] = row[0][0]
@@ -155,7 +154,6 @@ class filehandler:
         return measure_data
 
     def getMeasureID(self, measure):
-        measure_data ={}
         self.cursor.execute("use filehandler")
         sql = "select id from ks_measures where name = '%s';"%(measure)
         self.cursor.execute(sql)
@@ -164,17 +162,17 @@ class filehandler:
         self.db.commit()
         return measure_id
 
-    def getMeasureNameById(self, id):
+    def getMeasureNameById(self, measure_id):
         self.cursor.execute("use filehandler")
-        sql = "select name from ks_measures where Id =  %s;"%(id)
+        sql = "select name from ks_measures where Id =  %s;"%(measure_id)
         self.cursor.execute(sql)
         row = self.cursor.fetchall()
-        id = row[0][0]
-        return id
+        measure_id = row[0][0]
+        return measure_id
     
-    def getFormulaByMeasureId(self, id):
+    def getFormulaByMeasureId(self, measure_id):
         self.cursor.execute("use filehandler")
-        sql = "select formula from ks_measures where Id =  %s;"%(id)
+        sql = "select formula from ks_measures where Id =  %s;"%(measure_id)
         self.cursor.execute(sql)
         row = self.cursor.fetchall()
         formula = row[0][0]

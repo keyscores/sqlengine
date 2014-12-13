@@ -5,11 +5,9 @@ import ks_db_settings
 import unittest
 
 # import API
-# import API
 from register_raw_files import register_raw_filesCsvPy
 from load_precompute_normalize import load_precompute_normalize_CsvPy
-from user_analytics import measure_data
-
+from user_analytics import measure_data_V1
 
 
 class TestBinaryOpsAPIFilter(unittest.TestCase):
@@ -74,14 +72,14 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     #@unittest.skip("demonstrating skipping")
     def test_Binary_Op_Aggregate(self):
         measure_ids = self.MeasureName2MeasureIds("Units")
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         self.assertEqual(6, result["Units"]["total"])
         
     #@unittest.skip("demonstrating skipping")
     def test_Binary_Op_Multiplication_without_groupby_per_record(self):
         measure_ids = self.MeasureName2MeasureIds("NET_REVENUE")
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         self.assertEqual(12, result["NET_REVENUE"]["total"])
         
@@ -90,7 +88,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     def test_Binary_Op_Multiplication_with_groupby(self):
         measure_ids = self.MeasureName2MeasureIds("SumMult")
         group_by = "ProductType, ks_date, VendorId "
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         value = 0
         code_result = result["SumMult"]
@@ -102,7 +100,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     def test_Binary_Op_Multiplication_with_groupby_date(self):
         measure_ids = self.MeasureName2MeasureIds("SumMult")
         group_by = "ks_date"
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         value = 0
         code_result = result["SumMult"]
@@ -114,7 +112,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     #@unittest.skip("demonstrating skipping")    
     def test_Binary_Op_Addition_without_groupby_per_record(self):
         measure_ids = self.MeasureName2MeasureIds("Plus")
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         self.assertEqual(10, result["Plus"]["total"])
         
@@ -123,7 +121,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     def test_Binary_Op_Addition_with_groupby(self):
         measure_ids = self.MeasureName2MeasureIds("SumPlus")
         group_by = "ks_date, VendorId, ProductType"
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         value = 0
         code_result = result["SumPlus"]
@@ -136,7 +134,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     def test_Binary_Op_Addition_with_groupby_date(self):
         measure_ids = self.MeasureName2MeasureIds("SumPlus")
         group_by = "ks_date"
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         value = 0
         code_result = result["SumPlus"]
@@ -151,7 +149,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     def test_Intertable_Multiplication_without_groupby_per_record(self):
         #self.assertAlmostEqual(0.6192, self.ks_analytics.calculate("RoyaltyPrice*TaxRate","6/1/14"))
         measure_ids = self.MeasureName2MeasureIds("Individual_Tax")
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         self.assertAlmostEqual(0.209600002, result["Individual_Tax"]["total"])
 
@@ -159,7 +157,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     def test_Intertable_Multiplication_with_groupby(self):
         measure_ids = self.MeasureName2MeasureIds("Individual_TaxSum")
         group_by = "ks_date, VendorId, ProductType"
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         print result
         value = 0.0
@@ -173,7 +171,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     def test_Intertable_Multiplication_with_groupby_date(self):
         measure_ids = self.MeasureName2MeasureIds("Individual_TaxSum")
         group_by = "ks_date"
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         print result
         value = 0.0
@@ -186,7 +184,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     #@unittest.skip("demonstrating skipping")    
     def test_Intertable_Addition_without_groupby_per_record(self):
         measure_ids = self.MeasureName2MeasureIds("Nonsense")
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         self.assertAlmostEqual(4.104800001, result["Nonsense"]["total"])
     
@@ -194,7 +192,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     def test_Intertable_Addition_with_groupby(self):
         measure_ids = self.MeasureName2MeasureIds("NonsenseSum")
         group_by = "ks_date,ProductType, DownloadDate"
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         print result
         value = 0.0
@@ -208,7 +206,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     def test_Intertable_Addition_with_groupby_date(self):
         measure_ids = self.MeasureName2MeasureIds("NonsenseSum")
         group_by = "ks_date"
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01", group_by,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         print result
         value = 0.0
@@ -221,7 +219,7 @@ class TestBinaryOpsAPIFilter(unittest.TestCase):
     #@unittest.skip("demonstrating skipping")
     def test_Chained_Intertable(self):
         measure_ids = self.MeasureName2MeasureIds("REVENUE_AFTER_TAX")
-        result = measure_data(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
+        result = measure_data_V1(self.db, self.company_id, measure_ids, "day", "2014-06-01", "2014-06-01",None,None,
                               "and VendorId='0268_20140114_SOFA_ENGLIS'")
         self.assertAlmostEqual(11.37120008468, result["REVENUE_AFTER_TAX"]["total"])
         

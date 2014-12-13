@@ -2,6 +2,26 @@ from ks_precompute import precompute
 from ks_analytics import analytics
 #Interface for the front end to create reports
 
+def measure_data_V1(db, company_id, measures, frequency=None, start_date=None, end_date=None,
+    groupby=None, measure_filter=None, dimension_filters=None, score_kpis=True):
+    
+    result = measure_data(db, company_id, measures, frequency, start_date, end_date,
+                          groupby, measure_filter, dimension_filters, score_kpis)
+
+    V1_result = result
+    if groupby:    
+        V1_result = {}
+        for code in result:
+            print result[code]
+            new_data = {}
+            for level in result[code]:
+                print level
+                for date in result[code][level]:
+                    print result[code][level][date]
+                    new_data[level+date] = result[code][level][date]
+            V1_result[code] = new_data
+    return V1_result
+
 
 def measure_data(db, company_id, measures, frequency=None, start_date=None, end_date=None,
     groupby=None, measure_filter=None, dimension_filters=None, score_kpis=True):

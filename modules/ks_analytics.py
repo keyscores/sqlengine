@@ -132,26 +132,46 @@ class analytics:
         code_data["total"]= rows[0]
         return code_data
 
+
+    def parseGroupBy(self, group_by):
+        dims = group_by.split(",")
+        dims_without_date = []
+        for dim in dims:
+            if dim == "ks_date":
+                continue
+            dims_without_date.append(dim)
+        dims_without_date_str = ",".join(dims_without_date)
+        return dims_without_date_str
+
+
 #----------------------------------------
     def calculateGroupByAPI(self,bigTable,fact_name, group_by, where_str):
         sql = "use analytics;"
         self.cursor.execute(sql)
-        sql = "select %s,concat(%s) from %s group by %s;"%(fact_name,group_by, bigTable, group_by)
+        group_no_date = self.parseGroupBy(group_by)
+        if group_no_date == "":
+            group_no_date = "ks_date"
+        order_by = group_no_date + ",ks_date"
+        sql = "select %s,%s,concat(%s) from %s group by %s order by %s"%("ks_date",fact_name,group_no_date, bigTable, group_by, order_by)
         if where_str != None:
-            sql = "select %s, concat(%s) from %s where %s group by %s"%(fact_name,group_by, bigTable, where_str, group_by)
+            sql = "select %s,%s, concat(%s) from %s where %s group by %s order by %s"%("ks_date",fact_name,group_no_date, bigTable, where_str, group_by, order_by)
         print sql
         self.cursor.execute(sql)
         rows =  self.cursor.fetchall()
         print "**************************************"
         print "**************************************"
-        print rows
-        counter = 1
-        code_data ={}
+        date_dict ={}
+        last_level = rows[0][2]
+        level_dict = {}
         for row in rows:
-            counter = counter +1
-            code_data[row[1]] = row[0]
-            print counter
-        return code_data
+            if row[2] != last_level:
+                level_dict[last_level] = date_dict
+                date_dict ={}
+                last_level = row[2]
+            date_dict[str(row[0])]= row[1] 
+        level_dict[last_level] = date_dict
+        level_dict
+        return level_dict
 
 
     #----------------------------------------
@@ -219,8 +239,7 @@ class analytics:
             if metaData[metaDatum] == "fact":
                 sql = "ALTER TABLE %s change %s %s FLOAT;"%(bigTable, metaDatum, metaDatum)
                 self.cursor.execute(sql)
-
-   #----------------------------------------
+    #----------------------------------------
     def addDate2BigTable(self, bigTable, metaData):
         """
         Import date format from BigTable and store it into the col ks_date.

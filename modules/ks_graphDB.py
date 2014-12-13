@@ -25,9 +25,7 @@ class generalLinksDB:
                 if (first_dim != second_dim and first_level == second_level):
                     self.addEdge(first_node, second_node)
               
- #   def plot(self):                
- #       nx.draw_networkx(self.G)
- #       plt.show() # display
+ 
             
     def addEdge(self,node1, node2):
         for edge in self.edges:
