@@ -7,7 +7,6 @@ import sys
 import unittest
 import traceback
 from glob import glob
-from StringIO import StringIO
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, 'modules')))
 sys.path.append(os.path.join(os.path.dirname(__file__), "ks_filehandler"))
@@ -41,8 +40,7 @@ class TestPage(webapp2.RequestHandler):
 
         test_filter = self.request.get('filter')
 
-        error_sum = 0
-        failure_sum = 0
+        suite = None
         for test_module_name in glob(os.path.join(test_path, 'test*.py')):
             test_module_name = os.path.split(test_module_name)[1][:-3]
             if test_filter:
@@ -52,7 +50,7 @@ class TestPage(webapp2.RequestHandler):
                 elif test_module_name != test_filter:
                     continue
 
-            test_out = StringIO()
+            test_out = ResponseWrapper(self.response)
             print>>test_out, '=' * 60
             print>>test_out, 'tests.' + test_module_name
             print>>test_out, '=' * 60
@@ -65,23 +63,28 @@ class TestPage(webapp2.RequestHandler):
                 traceback.print_tb(tb, None, test_out)
                 print>>test_out, typ, err
                 failed_imports += 1
-                self.response.out.write(test_out.getvalue())
                 continue
 
-            suite = None
-            suite = loader.loadTestsFromModule(test_module)
-            print>>test_out, 'initialized suite', test_module_name
+            if suite is None:
+                suite = loader.loadTestsFromModule(test_module)
+                print>>test_out, 'initialized suite with', test_module_name
+            else:
+                suite.addTests(loader.loadTestsFromModule(test_module))
+                print>>test_out, 'added to suite', test_module_name
+                
 
             print>>test_out, 'OK'
-            self.response.out.write(test_out.getvalue())
             
+            
+
+        error_sum, failure_sum = 0, 0
+        if suite:
+            print>>test_out, '=' * 60
+            print>>test_out, 'RUNNING TESTS'
+            print>>test_out, '=' * 60
             results = unittest.TextTestRunner(
-                stream=ResponseWrapper(self.response), verbosity=2).run(suite)
-            
-
-            failure_sum += len(results.failures)
-            error_sum += len(results.errors)       
-
+                stream=ResponseWrapper(test_out), verbosity=2).run(suite)
+            error_sum, failure_sum = len(results.errors), len(results.failures)
 
 
         # Last line of OVERALL:... is used by test client to report back to CircleCI'

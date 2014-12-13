@@ -18,6 +18,11 @@ https://cloud.google.com/appengine/docs/python/tools/devserver
 - API to precompute results for a company
 - API to compute measures
 
+##API
+- **register_rawfiles:** Adds tables for a given company.
+- **load_precomputenormalized:** Adds a merged version of all tables for a given company.
+- **user_analytics:** Computes measures for a given company.
+
 ## modules
 **filehandler:** Stores company and location (local file, URL, ..) for each registered table. If a registered table has new facts (facts that have not been seen so far) they are stored using the filehandler.
 
