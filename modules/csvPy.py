@@ -20,7 +20,7 @@ csv_comissionTax = [['VendorId', 'Region', 'RightsHolder', 'ComissionRate', 'Tax
                     ['0268_20140114_SOFA_ENGLISHTEACHER', 'Latam', 'Studio A', '10%', '0.1'], 
                     ['0273_20140114_SOFA_ASSAULTONWALLSTREET', 'Latam', 'Studio A', '20%', '0.2'], 
                     ['0314_20140224_SOFA_QUEDAMORTAL', 'Latam', 'Studio A', '20%', '0.1'], 
-                    ['0023_20120510_MOBZ_DAYDREAMNATION', 'Latam', 'Studio A', '20%', '0.2%'], 
+                    ['0023_20120510_MOBZ_DAYDREAMNATION', 'Latam', 'Studio A', '20%', '0.2'], 
                     ['0268_20140114_SOFA_ENGLISHTEACHER', 'World', 'B Studio', '5%', '0.0048'], 
                     ['0273_20140114_SOFA_ASSAULTONWALLSTREET', 'World', 'B Studio', '5%', '0.0048'], 
                     ['0314_20140224_SOFA_QUEDAMORTAL', 'World', 'B Studio', '5%', '0.0048'], 
@@ -70,6 +70,16 @@ csv_comissionTax_new_version = [['VendorId', 'Region', 'RightsHolder', 'Comissio
                                 ['0314_20140224_SOFA_QUEDAMORTAL', 'World', 'B Studio', '1%', '70%'], 
                                 ['0023_20120510_MOBZ_DAYDREAMNATION', 'World', 'B Studio', '1%', '70%']]
 
+csv_sales_freq = [['VendorId', 'ProductType', 'Units', 'RoyaltyPrice', 'DownloadDate', 'CustomerCurrency', 'CountryCode'], 
+                  ['0273_20140114_SOFA_ASSAULTONWALLSTREET', 'M', '3', '2', '4/1/14', 'MXN', 'MX'], 
+                  ['0268_20140114_SOFA_ENGLISHTEACHER', 'M', '3', '2', '6/1/14', 'USD', 'BR'], 
+                  ['0268_20140114_SOFA_ENGLISHTEACHER', 'M', '3', '2', '6/1/14', 'MXN', 'MX'], 
+                  ['0273_20140114_SOFA_ASSAULTONWALLSTREET', 'M', '3', '2', '6/1/14', 'MXN', 'MX'], 
+                  ['0314_20140224_SOFA_QUEDAMORTAL', 'D', '3', '2', '6/1/14', 'USD', 'BR'], 
+                  ['0268_20140114_SOFA_ENGLISHTEACHER', 'M', '4', '3', '6/2/14', 'MXN', 'MX'], 
+                  ['0268_20140114_SOFA_ENGLISHTEACHER', 'M', '4', '3', '9/1/14', 'MXN', 'MX'], 
+                  ['0268_20140114_SOFA_ENGLISHTEACHER', 'M', '4', '3', '12/4/14', 'MXN', 'MX']]
+
 csv_dict = {}
 csv_dict["Sales"] = csv_sales
 csv_dict["CurrencyV2"] = csv_currencyV2
@@ -83,5 +93,5 @@ csv_dict["ComissionTax2"] = csv_comissionTax2
 
 csv_dict["Sales_new_version"] = csv_sales_new_version
 csv_dict["ComissionTax_new_version"] = csv_comissionTax_new_version
-
+csv_dict["Salesfreq"] = csv_sales_freq
 

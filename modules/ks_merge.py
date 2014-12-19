@@ -364,27 +364,32 @@ class merge:
         meta_data = {}
         for col in first_row:
             header_str =  header[counter]
-            # FIXXXXXME
-            try:
-                col = col.replace("%","")
-            except Exception as e:
-                print e
-                
-            print col
-            try:
-                date = time.strptime(col, '%m/%d/%y')
-                type = "date"
-            except ValueError:
-                try:
-                    float(col)
-                    type = "fact" 
-                except ValueError:
-                    type = "dim"
             counter = counter + 1
             # FIXXME
             if header_str == "id":
                 type = "sys"
+                
+            else:
+                # FIXXXXXME
+                try:
+                    col = col.replace("%","")
+                except Exception as e:
+                    print e
+                    
+                print header_str
+                print col
+                print table_name
+                try:
+                    date = time.strptime(col, '%m/%d/%y')
+                    type = "date"
+                except ValueError:
+                    try:
+                        float(col)
+                        type = "fact" 
+                    except ValueError:
+                        type = "dim"
             meta_data[header_str]=type
+            
         return meta_data
             
     

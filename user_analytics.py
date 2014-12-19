@@ -111,7 +111,8 @@ def measure_data(db, company_id, measures, frequency=None, start_date=None, end_
                                        start_date,
                                        end_date,
                                        groupby, 
-                                       dimension_filters)
+                                       dimension_filters,
+                                       frequency)
     
     return data    
     

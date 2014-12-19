@@ -73,7 +73,8 @@ class analytics:
                        start_date,
                        end_date,
                        groupby,
-                       dimension_filters):
+                       dimension_filters,
+                       frequency):
 
         data = {}
         for measure_id in measures:
@@ -93,7 +94,7 @@ class analytics:
                 where_condition = date_condition
                 if dimension_filters != None:
                     where_condition = date_condition + dimension_filters
-                code_data = self.calculateGroupByAPI(bigTable, measure_sql, groupby, where_condition)
+                code_data = self.calculateGroupByAPI(bigTable, measure_sql, groupby, where_condition, frequency)
 
             data[measure_name] = code_data
         return data
@@ -145,16 +146,23 @@ class analytics:
 
 
 #----------------------------------------
-    def calculateGroupByAPI(self,bigTable,fact_name, group_by, where_str):
+    def calculateGroupByAPI(self,bigTable,fact_name, group_by, where_str, frequency):
+        date_format_dict = {"day":"ks_date",
+                            "month":"DATE_FORMAT(ks_date,'%Y-%m')",
+                            "quarter":"""concat(DATE_FORMAT(ks_date,'%Y'),"-Q",quarter(ks_date))"""}
+        
+        ks_date_format = date_format_dict[frequency]
+        
         sql = "use analytics;"
         self.cursor.execute(sql)
         group_no_date = self.parseGroupBy(group_by)
         if group_no_date == "":
-            group_no_date = "ks_date"
-        order_by = group_no_date + ",ks_date"
-        sql = "select %s,%s,concat(%s) from %s group by %s order by %s"%("ks_date",fact_name,group_no_date, bigTable, group_by, order_by)
+            group_no_date = ks_date_format
+        order_by = group_no_date + "," + ks_date_format
+        group_by = group_no_date + "," + ks_date_format
+        sql = "select %s,%s,concat(%s) from %s group by %s order by %s"%(ks_date_format,fact_name,group_no_date, bigTable, group_by, order_by)
         if where_str != None:
-            sql = "select %s,%s, concat(%s) from %s where %s group by %s order by %s"%("ks_date",fact_name,group_no_date, bigTable, where_str, group_by, order_by)
+            sql = "select %s,%s, concat(%s) from %s where %s group by %s order by %s"%(ks_date_format,fact_name,group_no_date, bigTable, where_str, group_by, order_by)
         print sql
         self.cursor.execute(sql)
         rows =  self.cursor.fetchall()
