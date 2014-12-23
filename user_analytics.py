@@ -7,7 +7,10 @@ def measure_data_V1(db, company_id, measures, frequency=None, start_date=None, e
     
     result = measure_data(db, company_id, measures, frequency, start_date, end_date,
                           groupby, measure_filter, dimension_filters, score_kpis)
-
+    
+    if groupby == "ks_date":
+        return result
+    
     V1_result = result
     if groupby:    
         V1_result = {}

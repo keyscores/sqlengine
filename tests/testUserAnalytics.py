@@ -45,19 +45,20 @@ class TestUserAnaltics(unittest.TestCase):
     def test_measure_data_day_output(self):
         m_id = self.ks_fh.getMeasureID("UnitsSUM")
         result = measure_data(self.db, self.company_id, [m_id], "day", "2014-06-01", "2014-06-02","ks_date")
-        self.assertAlmostEqual(result['UnitsSUM']['2014-06-01']['2014-06-01'], 12.0)
-        self.assertAlmostEqual(result['UnitsSUM']['2014-06-02']['2014-06-02'], 4.0)
+        self.assertAlmostEqual(result['UnitsSUM']['2014-06-01'], 12.0)
+        self.assertAlmostEqual(result['UnitsSUM']['2014-06-02'], 4.0)
 
     def test_measure_data_month_output(self):
         m_id = self.ks_fh.getMeasureID("UnitsSUM")
         result = measure_data(self.db, self.company_id, [m_id], "month", "2014-06-01", "2014-06-30","ks_date")
-        self.assertAlmostEqual(result['UnitsSUM']['2014-06']['2014-06'], 16.0)
+        print result
+        self.assertAlmostEqual(result['UnitsSUM']['2014-06'], 16.0)
 
     def test_measure_data_quarter_output(self):
         m_id = self.ks_fh.getMeasureID("UnitsSUM")
         result = measure_data(self.db, self.company_id, [m_id], "quarter", "2014-04-01", "2014-06-30","ks_date")
         print result
-        self.assertAlmostEqual(result['UnitsSUM']['2014-Q2']['2014-Q2'], 16.0)
+        self.assertAlmostEqual(result['UnitsSUM']['2014-Q2'], 16.0)
 
 if __name__ == '__main__':
     unittest.main()

@@ -157,9 +157,12 @@ class analytics:
         self.cursor.execute(sql)
         group_no_date = self.parseGroupBy(group_by)
         if group_no_date == "":
+            group_by = ks_date_format
             group_no_date = ks_date_format
-        order_by = group_no_date + "," + ks_date_format
-        group_by = group_no_date + "," + ks_date_format
+            order_by = ks_date_format
+        else:
+            order_by = group_no_date + "," + ks_date_format
+            group_by = group_no_date + "," + ks_date_format
         sql = "select %s,%s,concat(%s) from %s group by %s order by %s"%(ks_date_format,fact_name,group_no_date, bigTable, group_by, order_by)
         if where_str != None:
             sql = "select %s,%s, concat(%s) from %s where %s group by %s order by %s"%(ks_date_format,fact_name,group_no_date, bigTable, where_str, group_by, order_by)
@@ -168,17 +171,22 @@ class analytics:
         rows =  self.cursor.fetchall()
         print "**************************************"
         print "**************************************"
-        date_dict ={}
-        last_level = rows[0][2]
-        level_dict = {}
-        for row in rows:
-            if row[2] != last_level:
-                level_dict[last_level] = date_dict
-                date_dict ={}
-                last_level = row[2]
-            date_dict[str(row[0])]= row[1] 
-        level_dict[last_level] = date_dict
-        level_dict
+        if group_no_date == ks_date_format:
+            date_dict ={}
+            for row in rows:
+                 date_dict[str(row[0])]= row[1]
+                 level_dict = date_dict 
+        else:
+            date_dict ={}
+            last_level = rows[0][2]
+            level_dict = {}
+            for row in rows:
+                if row[2] != last_level:
+                    level_dict[last_level] = date_dict
+                    date_dict ={}
+                    last_level = row[2]
+                date_dict[str(row[0])]= row[1] 
+            level_dict[last_level] = date_dict
         return level_dict
 
 
